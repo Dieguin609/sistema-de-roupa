@@ -200,7 +200,7 @@
       </div>
     </div>
   </div>
-  <script>
+ <script>
   const dadosItens = {
     camisas: [
       {
@@ -253,14 +253,12 @@
         dffs: ['bmyri'],
         png: 'short4.png'
       }
-    ],
-    acessorios: []
+    ]
   };
 
   let abaAtiva = 'camisas';
   let camisaSelecionada = null;
   let shortSelecionado = null;
-  let acessorioSelecionado = null;
 
   const listaItensEl = document.getElementById('lista-itens');
   const nomeItemEl = document.getElementById('nome-item');
@@ -358,21 +356,21 @@
   });
 
   btnComprar.onclick = () => {
-  if (!camisaSelecionada) return alert("Selecione uma camisa!");
-  if (!shortSelecionado) return alert("Selecione um short!");
+    if (!camisaSelecionada) return alert("Selecione uma camisa!");
+    if (!shortSelecionado) return alert("Selecione um short!");
 
-  const data = `${camisaSelecionada.id}|${shortSelecionado.dffs[0]}`;
-  if (typeof cef !== 'undefined' && cef.emit) {
-    cef.emit("loja_evento", data); // envia para o servidor aplicar skin
-    cef.emit("loja_evento", "fechar_loja"); // fecha a loja
-  }
-};
+    const data = `${camisaSelecionada.id}|${shortSelecionado.dffs[0]}`;
+    if (typeof cef !== 'undefined' && cef.emit) {
+      cef.emit("loja_evento", data); // Envia para o Pawn aplicar a skin
+      cef.emit("loja_evento", "fechar_loja"); // Fecha o browser da loja (id 90)
+    }
+  };
 
-btnCancelar.onclick = () => {
-  if (typeof cef !== 'undefined' && cef.emit) {
-    cef.emit("loja_evento", "fechar_loja");
-  }
-};
+  btnCancelar.onclick = () => {
+    if (typeof cef !== 'undefined' && cef.emit) {
+      cef.emit("loja_evento", "fechar_loja");
+    }
+  };
 
   carregarItens(abaAtiva);
 </script>
