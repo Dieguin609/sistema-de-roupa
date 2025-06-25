@@ -1,383 +1,350 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Loja de Roupas RP</title>
-<style>
-  html, body {
-    margin: 0; padding: 0; height: 100%;
-    background: transparent;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #eee;
-    overflow: hidden;
-  }
-  body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
-  .container-loja {
-    display: flex;
-    width: 90vw;
-    max-width: 1400px;
-    height: 90vh;
-  }
-  .menu-esquerdo, .painel-direito {
-    background: rgba(107, 0, 154, 0.8);
-    border: 2px solid #bb88ff;
-    box-shadow: 0 0 15px 3px #bb88ff88;
-    border-radius: 12px;
-    box-sizing: border-box;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-  .menu-esquerdo {
-    width: 320px;
-    margin-right: 20px;
-  }
-  .painel-direito {
-    width: 300px;
-    margin-left: 20px;
-  }
-  .menu-esquerdo h1 {
-    margin: 0 0 20px;
-    font-size: 30px;
-    text-align: center;
-    color: #ddb3ff;
-  }
-  .abas {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin-bottom: 20px;
-  }
-  .aba {
-    cursor: pointer;
-    padding: 6px 5px; /* antes era maior, agora está menor */
-    border-radius: 5px;
-    background: #8603f1cc;
-    color: #e1d7ff;
-    user-select: none;
-    transition: background 0.3s;
-    border: 1.5px solid transparent;
-    font-size: 16px;
-    min-width: 80px;
-    text-align: center;
-  }
-  .aba:hover {
-    background: #a569ffcc;
-    border-color: #ddb3ff;
-  }
-  .aba.active {
-    background: #ddb3ff;
-    color: #4b0082;
-    font-weight: 700;
-    border-color: #ffdd33;
-  }
-  .lista-itens {
-  flex: 1;
-  overflow-y: auto;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-auto-rows: 130px; /* altura fixa para linhas */
-  gap: 15px;
-  padding-right: 5px;
-}
-.item {
-  background: rgba(127, 63, 255, 0.5);
-  border-radius: 10px;
-  padding: 10px;
-  cursor: pointer;
-  text-align: center;
-  transition: background 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-  user-select: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid transparent;
-}
-.item img {
-  width: 90px;
-  height: 90px;
-  object-fit: contain;
-  margin-bottom: 10px;
-  pointer-events: none;
-  margin-top: 25px; /* empurra a imagem um pouco para baixo */
-}
-  /* Área central transparente */
-  .area-preview {
-    flex: 1;
-    margin: 0 20px;
-    user-select: none;
-    pointer-events: none;
-    position: relative;
-  }
-  .area-preview > * {
-    visibility: hidden;
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Loja de Roupas</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
 
-  /* Painel direito detalhes */
-  .detalhes h2 {
-    margin-top: 0;
-    color: #fffacd;
-    font-size: 24px;
-  }
-  .detalhes p {
-    margin: 7px 0;
-    font-size: 16px;
-  }
-  .sacola {
-    margin-top: 40px;
-    border-top: 1.5px solid #ffdd33aa;
-    padding-top: 18px;
-    font-size: 22px;
-    color: #ffdd33;
-    font-weight: 700;
-  }
-  .botoes {
-    margin-top: 35px;
-    display: flex;
-    justify-content: space-between;
-  }
-  button {
-    background: #ddb3ff;
-    border: none;
-    padding: 14px 26px;
-    border-radius: 7px;
-    font-weight: 700;
-    cursor: pointer;
-    color: #4b0082;
-    transition: background 0.3s ease;
-    user-select: none;
-    font-size: 16px;
-  }
-  button:hover:not(:disabled) {
-    background: #ffdd33;
-    color: #220055;
-  }
-  button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
+    body {
+      margin: 0;
+      background: transparent;
+      color: #fff;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .container {
+      display: flex;
+      gap: 20px;
+      width: 95%;
+      max-width: 1400px;
+      height: 90%;
+      border-radius: 12px;
+    }
+
+    .sidebar, .details {
+      width: 300px;
+      background: rgba(20, 20, 30, 0.95);
+      border: 2px solid #8a2be2;
+      padding: 20px;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar h2 {
+      margin: 0 0 20px;
+      text-align: center;
+      font-size: 28px;
+      color: #bb88ff;
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .tab {
+      background: #4a148c;
+      padding: 8px 12px;
+      border-radius: 6px;
+      color: #fff;
+      cursor: pointer;
+      font-weight: bold;
+      flex: 1;
+      text-align: center;
+      margin: 0 4px;
+      border: 1px solid transparent;
+    }
+
+    .tab.active {
+      background: #bb88ff;
+      color: #2c003e;
+      border-color: #ffdd33;
+    }
+
+    .item-list {
+      flex: 1;
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .item {
+      background: rgba(138, 43, 226, 0.1);
+      border: 2px solid transparent;
+      border-radius: 10px;
+      text-align: center;
+      padding: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .item.selected {
+      border-color: #ffdd33;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .item:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: #bb88ff;
+    }
+
+    .item img {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      margin-bottom: 6px;
+    }
+
+    .preview {
+      flex: 1;
+      pointer-events: none;
+    }
+
+    .details h3 {
+      margin: 0;
+      color: #ffdd33;
+    }
+
+    .details p {
+      margin: 8px 0;
+      color: #ddd;
+    }
+
+    .total {
+      margin-top: auto;
+      border-top: 1px solid #444;
+      padding-top: 15px;
+      font-size: 18px;
+      color: #ffdd33;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+      background: #bb88ff;
+      color: #2c003e;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #ffdd33;
+      color: #000;
+    }
+
+    button:disabled {
+      background: #999;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 <body>
-  <div class="container-loja">
-    <div class="menu-esquerdo">
-      <h1>Loja</h1>
-      <div class="abas">
-        <div class="aba active" data-aba="camisas">Camisas</div>
-        <div class="aba" data-aba="shorts">Shorts</div>
-        <div class="aba" data-aba="acessorios">Acessórios</div>
+  <div class="container">
+    <div class="sidebar">
+      <h2>Loja de Roupas</h2>
+      <div class="tabs">
+        <div class="tab active" data-tab="camisas">Camisas</div>
+        <div class="tab" data-tab="shorts">Shorts</div>
+        <div class="tab" data-tab="acessorios">Acessórios</div>
       </div>
-      <div class="lista-itens" id="lista-itens">
-        <!-- Itens carregados aqui -->
-      </div>
+      <div class="item-list" id="item-list"></div>
     </div>
 
-    <div class="area-preview">
-      <!-- Espaço transparente para o personagem do jogo aparecer -->
-      <div>Preview (invisível)</div>
-    </div>
+    <div class="preview"></div>
 
-    <div class="painel-direito">
-      <div class="detalhes">
-        <h2 id="nome-item">Selecione um item</h2>
-        <p id="descricao-item">Descrição do item aparecerá aqui.</p>
-        <p><strong>Preço:</strong> <span id="preco-item">R$ 0</span></p>
+    <div class="details">
+      <h3 id="item-title">Selecione um item</h3>
+      <p id="item-desc">Descrição do item aparecerá aqui.</p>
+      <p><strong>Preço:</strong> <span id="item-price">R$ 0</span></p>
+      <div class="total">
+        Total da Sacola: R$ <span id="cart-total">0</span>
       </div>
-      <div class="sacola">
-        <strong>Total da sacola:</strong> R$ <span id="total-sacola">0</span>
-      </div>
-      <div class="botoes">
-        <button id="btn-comprar" disabled>Comprar</button>
-        <button id="btn-cancelar">Cancelar</button>
+      <div class="actions">
+        <button id="buy-btn" disabled>Comprar</button>
+        <button id="cancel-btn">Cancelar</button>
       </div>
     </div>
   </div>
 
-<script>
-  const dadosItens = {
-    camisas: [
-      {
-        id: 'camisa1',
-        nome: 'Brasil',
-        descricao: 'Camisa do Brasil azul com design clássico.',
-        preco: 15000,
-        dffs: ['wbdyg1', 'wmybmx'],
-        png: 'camisa1.png'
-      },
-      {
-        id: 'camisa2',
-        nome: 'Falamengo',
-        descricao: 'Camisa do Flamengo oficial.',
-        preco: 18000,
-        dffs: ['bmost', 'bmyri'],
-        png: 'camisa2.png'
+  <script>
+    const dadosItens = {
+      camisas: [
+        {
+          id: 'camisa1',
+          nome: 'Brasil',
+          descricao: 'Camisa do Brasil azul com design clássico.',
+          preco: 15000,
+          dffs: ['wbdyg1', 'wmybmx'],
+          png: 'camisa1.png'
+        },
+        {
+          id: 'camisa2',
+          nome: 'Falamengo',
+          descricao: 'Camisa do Flamengo oficial.',
+          preco: 18000,
+          dffs: ['bmost', 'bmyri'],
+          png: 'camisa2.png'
+        }
+      ],
+      shorts: [
+        {
+          id: 'short1',
+          nome: 'Short Azul Brasil',
+          descricao: 'Short que combina com a Camisa do Brasil Azul.',
+          preco: 7000,
+          dffs: ['wbdyg1'],
+          png: 'short1.png'
+        },
+        {
+          id: 'short2',
+          nome: 'Short Preto Brasil',
+          descricao: 'Outra opção de short para a Camisa do Brasil Azul.',
+          preco: 9000,
+          dffs: ['wmybmx'],
+          png: 'short2.png'
+        },
+        {
+          id: 'short3',
+          nome: 'Short Flamengo 1',
+          descricao: 'Short para combinar com a camisa do Flamengo.',
+          preco: 8000,
+          dffs: ['bmost'],
+          png: 'short3.png'
+        },
+        {
+          id: 'short4',
+          nome: 'Short Flamengo 2',
+          descricao: 'Outra opção de short para o Flamengo.',
+          preco: 8500,
+          dffs: ['bmyri'],
+          png: 'short4.png'
+        }
+      ],
+      acessorios: []
+    };
+
+    let abaAtiva = 'camisas';
+    let camisaSelecionada = null;
+    let shortSelecionado = null;
+
+    const itemList = document.getElementById('item-list');
+    const itemTitle = document.getElementById('item-title');
+    const itemDesc = document.getElementById('item-desc');
+    const itemPrice = document.getElementById('item-price');
+    const cartTotal = document.getElementById('cart-total');
+    const buyBtn = document.getElementById('buy-btn');
+    const cancelBtn = document.getElementById('cancel-btn');
+
+    function carregarItens(aba) {
+      itemList.innerHTML = '';
+      buyBtn.disabled = true;
+      itemTitle.textContent = 'Selecione um item';
+      itemDesc.textContent = 'Descrição do item aparecerá aqui.';
+      itemPrice.textContent = 'R$ 0';
+
+      let itens = dadosItens[aba] || [];
+
+      if (aba === 'shorts' && camisaSelecionada) {
+        itens = itens.filter(short => short.dffs.some(dff => camisaSelecionada.dffs.includes(dff)));
       }
-    ],
-    shorts: [
-      {
-        id: 'short1',
-        nome: 'Short Azul Brasil',
-        descricao: 'Short que combina com a Camisa do Brasil Azul.',
-        preco: 7000,
-        dffs: ['wbdyg1'],
-        png: 'short1.png'
-      },
-      {
-        id: 'short2',
-        nome: 'Short Preto Brasil',
-        descricao: 'Outra opção de short para a Camisa do Brasil Azul.',
-        preco: 9000,
-        dffs: ['wmybmx'],
-        png: 'short2.png'
-      },
-      {
-        id: 'short3',
-        nome: 'Short Flamengo 1',
-        descricao: 'Short para combinar com a camisa do Flamengo.',
-        preco: 8000,
-        dffs: ['bmost'],
-        png: 'short3.png'
-      },
-      {
-        id: 'short4',
-        nome: 'Short Flamengo 2',
-        descricao: 'Outra opção de short para o Flamengo.',
-        preco: 8500,
-        dffs: ['bmyri'],
-        png: 'short4.png'
-      }
-    ],
-    acessorios: []
-  };
 
-  let abaAtiva = 'camisas';
-  let camisaSelecionada = null;
-  let shortSelecionado = null;
-
-  const listaItensEl = document.getElementById('lista-itens');
-  const nomeItemEl = document.getElementById('nome-item');
-  const descricaoItemEl = document.getElementById('descricao-item');
-  const precoItemEl = document.getElementById('preco-item');
-  const totalSacolaEl = document.getElementById('total-sacola');
-  const btnComprar = document.getElementById('btn-comprar');
-  const btnCancelar = document.getElementById('btn-cancelar');
-
-  function carregarItens(aba) {
-    listaItensEl.innerHTML = '';
-    btnComprar.disabled = true;
-    nomeItemEl.textContent = 'Selecione um item';
-    descricaoItemEl.textContent = 'Descrição do item aparecerá aqui.';
-    precoItemEl.textContent = 'R$ 0';
-
-    let itens = dadosItens[aba] || [];
-
-    if (aba === 'shorts') {
-      if (!camisaSelecionada) {
-        listaItensEl.innerHTML = `<p style="color:#ffdd33; text-align:center;">Selecione uma camisa primeiro para ver os shorts disponíveis.</p>`;
+      if (aba === 'shorts' && !camisaSelecionada) {
+        itemList.innerHTML = '<p style="grid-column: span 2; color: #ffdd33;">Selecione uma camisa primeiro</p>';
         return;
       }
-      itens = itens.filter(short => short.dffs.some(dff => camisaSelecionada.dffs.includes(dff)));
+
+      itens.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `
+          <img src="${item.png}" alt="${item.nome}">
+          <div><strong>${item.nome}</strong></div>
+          <div>R$ ${item.preco.toLocaleString()}</div>
+        `;
+        div.onclick = () => selecionarItem(item, div);
+        itemList.appendChild(div);
+      });
     }
 
-    if (itens.length === 0) {
-      listaItensEl.innerHTML = `<p style="color:#ffdd33; text-align:center;">Nenhum item disponível.</p>`;
-      return;
-    }
+    function selecionarItem(item, div) {
+      document.querySelectorAll('.item').forEach(i => i.classList.remove('selected'));
+      div.classList.add('selected');
 
-    itens.forEach(item => {
-      const div = document.createElement('div');
-      div.className = 'item';
-      div.dataset.id = item.id;
-      div.innerHTML = `
-        <img src="${item.png}" alt="${item.nome}" />
-        <div>${item.nome}</div>
-        <div>R$ ${item.preco.toLocaleString()}</div>
-      `;
-      div.onclick = () => selecionarItem(item, div);
-      if (
-        (aba === 'camisas' && camisaSelecionada && camisaSelecionada.id === item.id) ||
-        (aba === 'shorts' && shortSelecionado && shortSelecionado.id === item.id)
-      ) {
-        div.classList.add('selected');
+      itemTitle.textContent = item.nome;
+      itemDesc.textContent = item.descricao;
+      itemPrice.textContent = `R$ ${item.preco.toLocaleString()}`;
+      buyBtn.disabled = false;
+
+      if (abaAtiva === 'camisas') {
+        camisaSelecionada = item;
+        shortSelecionado = null;
+      } else if (abaAtiva === 'shorts') {
+        shortSelecionado = item;
       }
-      listaItensEl.appendChild(div);
+
+      atualizarTotal();
+    }
+
+    function atualizarTotal() {
+      let total = 0;
+      if (camisaSelecionada) total += camisaSelecionada.preco;
+      if (shortSelecionado) total += shortSelecionado.preco;
+      cartTotal.textContent = total.toLocaleString();
+    }
+
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.onclick = () => {
+        document.querySelector('.tab.active').classList.remove('active');
+        tab.classList.add('active');
+        abaAtiva = tab.dataset.tab;
+        carregarItens(abaAtiva);
+      };
     });
-  }
 
-  function selecionarItem(item, divEl) {
-    document.querySelectorAll('.item.selected').forEach(el => el.classList.remove('selected'));
+    buyBtn.onclick = () => {
+      if (!camisaSelecionada || !shortSelecionado) {
+        alert("Selecione uma camisa e um short!");
+        return;
+      }
 
-    divEl.classList.add('selected');
-    nomeItemEl.textContent = item.nome;
-    descricaoItemEl.textContent = item.descricao;
-    precoItemEl.textContent = `R$ ${item.preco.toLocaleString()}`;
-    btnComprar.disabled = false;
-
-    if (abaAtiva === 'camisas') {
-      camisaSelecionada = item;
-      shortSelecionado = null;
-    } else if (abaAtiva === 'shorts') {
-      shortSelecionado = item;
-    }
-
-    atualizarTotalSacola();
-  }
-
-  function atualizarTotalSacola() {
-    let total = 0;
-    if (camisaSelecionada) total += camisaSelecionada.preco;
-    if (shortSelecionado) total += shortSelecionado.preco;
-    totalSacolaEl.textContent = total.toLocaleString();
-  }
-
-  document.querySelectorAll('.aba').forEach(abaEl => {
-    abaEl.onclick = () => {
-      if (abaEl.dataset.aba === abaAtiva) return;
-
-      document.querySelector('.aba.active').classList.remove('active');
-      abaEl.classList.add('active');
-
-      abaAtiva = abaEl.dataset.aba;
-
-      nomeItemEl.textContent = 'Selecione um item';
-      descricaoItemEl.textContent = 'Descrição do item aparecerá aqui.';
-      precoItemEl.textContent = 'R$ 0';
-      btnComprar.disabled = true;
-
-      carregarItens(abaAtiva);
+      const data = `${camisaSelecionada.id}|${shortSelecionado.dffs[0]}`;
+      if (typeof cef !== 'undefined' && cef.emit) {
+        cef.emit("loja_evento", data);
+        cef.emit("loja_evento", "fechar_loja");
+        cef.emit("loja_evento", "mouse_off");
+      }
     };
-  });
 
-  btnComprar.onclick = () => {
-    if (!camisaSelecionada) return alert("Selecione uma camisa!");
-    if (!shortSelecionado) return alert("Selecione um short!");
+    cancelBtn.onclick = () => {
+      if (typeof cef !== 'undefined' && cef.emit) {
+        cef.emit("loja_evento", "fechar_loja");
+        cef.emit("loja_evento", "mouse_off");
+      }
+    };
 
-    const data = `${camisaSelecionada.id}|${shortSelecionado.dffs[0]}`;
-
-    if (typeof cef !== 'undefined' && cef.emit) {
-      cef.emit("loja_evento", data);           // Envia dados para compra
-      cef.emit("loja_evento", "fechar_loja");  // Fecha a loja
-      cef.emit("loja_evento", "mouse_off");    // Remove foco (opcional)
-    }
-  };
-
-  btnCancelar.onclick = () => {
-    if (typeof cef !== 'undefined' && cef.emit) {
-      cef.emit("loja_evento", "fechar_loja");
-      cef.emit("loja_evento", "mouse_off");
-    }
-  };
-
-  carregarItens(abaAtiva);
-</script>
-
+    carregarItens(abaAtiva);
+  </script>
 </body>
 </html>
