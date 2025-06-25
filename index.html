@@ -164,43 +164,7 @@
     opacity: 0.5;
     cursor: not-allowed;
   }
-</style>
-</head>
-<body>
-  <div class="container-loja">
-    <div class="menu-esquerdo">
-      <h1>Loja</h1>
-      <div class="abas">
-        <div class="aba active" data-aba="camisas">Camisas</div>
-        <div class="aba" data-aba="shorts">Shorts</div>
-        <div class="aba" data-aba="acessorios">Acessórios</div>
-      </div>
-      <div class="lista-itens" id="lista-itens">
-        <!-- Itens carregados aqui -->
-      </div>
-    </div>
-
-    <div class="area-preview">
-      <!-- Espaço transparente para o personagem do jogo aparecer -->
-      <div>Preview (invisível)</div>
-    </div>
-
-    <div class="painel-direito">
-      <div class="detalhes">
-        <h2 id="nome-item">Selecione um item</h2>
-        <p id="descricao-item">Descrição do item aparecerá aqui.</p>
-        <p><strong>Preço:</strong> <span id="preco-item">R$ 0</span></p>
-      </div>
-      <div class="sacola">
-        <strong>Total da sacola:</strong> R$ <span id="total-sacola">0</span>
-      </div>
-      <div class="botoes">
-        <button id="btn-comprar" disabled>Comprar</button>
-        <button id="btn-cancelar">Cancelar</button>
-      </div>
-    </div>
-  </div>
- <script>
+<script>
   const dadosItens = {
     camisas: [
       {
@@ -253,7 +217,8 @@
         dffs: ['bmyri'],
         png: 'short4.png'
       }
-    ]
+    ],
+    acessorios: []
   };
 
   let abaAtiva = 'camisas';
@@ -311,8 +276,7 @@
   }
 
   function selecionarItem(item, divEl) {
-    const itensDom = document.querySelectorAll('.item.selected');
-    itensDom.forEach(el => el.classList.remove('selected'));
+    document.querySelectorAll('.item.selected').forEach(el => el.classList.remove('selected'));
 
     divEl.classList.add('selected');
     nomeItemEl.textContent = item.nome;
@@ -360,19 +324,23 @@
     if (!shortSelecionado) return alert("Selecione um short!");
 
     const data = `${camisaSelecionada.id}|${shortSelecionado.dffs[0]}`;
+
     if (typeof cef !== 'undefined' && cef.emit) {
-      cef.emit("loja_evento", data); // Envia para o Pawn aplicar a skin
-      cef.emit("loja_evento", "fechar_loja"); // Fecha o browser da loja (id 90)
+      cef.emit("loja_evento", data);           // Envia dados para compra
+      cef.emit("loja_evento", "fechar_loja");  // Fecha a loja
+      cef.emit("loja_evento", "mouse_off");    // Remove foco (opcional)
     }
   };
 
   btnCancelar.onclick = () => {
     if (typeof cef !== 'undefined' && cef.emit) {
       cef.emit("loja_evento", "fechar_loja");
+      cef.emit("loja_evento", "mouse_off");
     }
   };
 
   carregarItens(abaAtiva);
 </script>
+
 </body>
 </html>
