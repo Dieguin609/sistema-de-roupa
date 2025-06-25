@@ -326,7 +326,7 @@
 
     if (abaAtiva === 'camisas') {
       camisaSelecionada = item;
-      shortSelecionado = null;
+      shortSelecionado = null; // Limpa o short ao trocar camisa
       acessorioSelecionado = null;
     } else if (abaAtiva === 'shorts') {
       shortSelecionado = item;
@@ -374,23 +374,21 @@
       return;
     }
 
-    // Monta a string no formato esperado pelo Pawn: "camisa1|wmybmx"
     const data = `${camisaSelecionada.id}|${shortSelecionado.dffs[0]}`;
 
-    cef_emit_event('loja:comprar', data);
-    cef_emit_event('loja:cancelar');
+    enviarEventoCEF('loja:comprar', data);
+    enviarEventoCEF('loja:cancelar', '');
   };
 
   btnCancelar.onclick = () => {
-    cef_emit_event('loja:cancelar');
+    enviarEventoCEF('loja:cancelar', '');
   };
 
-  function cef_emit_event(eventName, data) {
+  function enviarEventoCEF(eventName, data = '') {
     if (typeof cef !== 'undefined' && cef.emit) {
       cef.emit(eventName, data);
     } else {
-      // fallback para testes no navegador
-      console.log(`Evento emitido: ${eventName}`, data);
+      console.log(`CEF emit evento: ${eventName}`, data);
     }
   }
 
