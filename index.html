@@ -164,6 +164,43 @@
     opacity: 0.5;
     cursor: not-allowed;
   }
+  </style>
+</head>
+<body>
+  <div class="container-loja">
+    <div class="menu-esquerdo">
+      <h1>Loja</h1>
+      <div class="abas">
+        <div class="aba active" data-aba="camisas">Camisas</div>
+        <div class="aba" data-aba="shorts">Shorts</div>
+        <div class="aba" data-aba="acessorios">Acessórios</div>
+      </div>
+      <div class="lista-itens" id="lista-itens">
+        <!-- Itens carregados aqui -->
+      </div>
+    </div>
+
+    <div class="area-preview">
+      <!-- Espaço transparente para o personagem do jogo aparecer -->
+      <div>Preview (invisível)</div>
+    </div>
+
+    <div class="painel-direito">
+      <div class="detalhes">
+        <h2 id="nome-item">Selecione um item</h2>
+        <p id="descricao-item">Descrição do item aparecerá aqui.</p>
+        <p><strong>Preço:</strong> <span id="preco-item">R$ 0</span></p>
+      </div>
+      <div class="sacola">
+        <strong>Total da sacola:</strong> R$ <span id="total-sacola">0</span>
+      </div>
+      <div class="botoes">
+        <button id="btn-comprar" disabled>Comprar</button>
+        <button id="btn-cancelar">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
 <script>
   const dadosItens = {
     camisas: [
