@@ -365,35 +365,21 @@
   });
 
   btnComprar.onclick = () => {
-    if (!camisaSelecionada) {
-      alert('Você deve selecionar pelo menos uma camisa!');
-      return;
-    }
-    const compra = {
-      camisa: camisaSelecionada ? {
-        id: camisaSelecionada.id,
-        nome: camisaSelecionada.nome,
-        preco: camisaSelecionada.preco,
-        dffs: camisaSelecionada.dffs
-      } : null,
-      short: shortSelecionado ? {
-        id: shortSelecionado.id,
-        nome: shortSelecionado.nome,
-        preco: shortSelecionado.preco,
-        dffs: shortSelecionado.dffs
-      } : null,
-      acessorio: acessorioSelecionado ? {
-        id: acessorioSelecionado.id,
-        nome: acessorioSelecionado.nome,
-        preco: acessorioSelecionado.preco,
-        dffs: acessorioSelecionado.dffs
-      } : null,
-      total: (camisaSelecionada.preco || 0) + (shortSelecionado ? shortSelecionado.preco : 0) + (acessorioSelecionado ? acessorioSelecionado.preco : 0)
-    };
+  if (!camisaSelecionada) {
+    alert('Você deve selecionar pelo menos uma camisa!');
+    return;
+  }
+  if (!shortSelecionado) {
+    alert('Você deve selecionar um short!');
+    return;
+  }
 
-    cef_emit_event('loja:comprar', JSON.stringify(compra));
-    cef_emit_event('loja:cancelar');
-  };
+  // Monta a string no formato esperado pelo Pawn: "camisa1|wmybmx"
+  const data = `${camisaSelecionada.id}|${shortSelecionado.dffs[0]}`;
+
+  cef_emit_event('loja:comprar', data);
+  cef_emit_event('loja:cancelar');
+};
 
   btnCancelar.onclick = () => {
     cef_emit_event('loja:cancelar');
