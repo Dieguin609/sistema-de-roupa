@@ -365,29 +365,33 @@
   });
 
   btnComprar.onclick = () => {
-  if (!camisaSelecionada) {
-    alert('Você deve selecionar pelo menos uma camisa!');
-    return;
-  }
-  if (!shortSelecionado) {
-    alert('Você deve selecionar um short!');
-    return;
-  }
+    if (!camisaSelecionada) {
+      alert('Você deve selecionar pelo menos uma camisa!');
+      return;
+    }
+    if (!shortSelecionado) {
+      alert('Você deve selecionar um short!');
+      return;
+    }
 
-  // Monta a string no formato esperado pelo Pawn: "camisa1|wmybmx"
-  const data = `${camisaSelecionada.id}|${shortSelecionado.dffs[0]}`;
+    // Monta a string no formato esperado pelo Pawn: "camisa1|wmybmx"
+    const data = `${camisaSelecionada.id}|${shortSelecionado.dffs[0]}`;
 
-  cef_emit_event('loja:comprar', data);
-  cef_emit_event('loja:cancelar');
-};
+    cef_emit_event('loja:comprar', data);
+    cef_emit_event('loja:cancelar');
+  };
 
   btnCancelar.onclick = () => {
     cef_emit_event('loja:cancelar');
   };
 
   function cef_emit_event(eventName, data) {
-    // Só para testar no navegador, remova quando usar no servidor
-    console.log(`Evento emitido: ${eventName}`, data);
+    if (typeof cef !== 'undefined' && cef.emit) {
+      cef.emit(eventName, data);
+    } else {
+      // fallback para testes no navegador
+      console.log(`Evento emitido: ${eventName}`, data);
+    }
   }
 
   carregarItens(abaAtiva);
