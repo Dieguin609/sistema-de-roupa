@@ -200,8 +200,7 @@
       </div>
     </div>
   </div>
-
-<script>
+  <script>
   const dadosItens = {
     camisas: [
       {
@@ -305,8 +304,7 @@
       div.onclick = () => selecionarItem(item, div);
       if (
         (aba === 'camisas' && camisaSelecionada && camisaSelecionada.id === item.id) ||
-        (aba === 'shorts' && shortSelecionado && shortSelecionado.id === item.id) ||
-        (aba === 'acessorios' && acessorioSelecionado && acessorioSelecionado.id === item.id)
+        (aba === 'shorts' && shortSelecionado && shortSelecionado.id === item.id)
       ) {
         div.classList.add('selected');
       }
@@ -326,12 +324,9 @@
 
     if (abaAtiva === 'camisas') {
       camisaSelecionada = item;
-      shortSelecionado = null; // Limpa o short ao trocar camisa
-      acessorioSelecionado = null;
+      shortSelecionado = null;
     } else if (abaAtiva === 'shorts') {
       shortSelecionado = item;
-    } else if (abaAtiva === 'acessorios') {
-      acessorioSelecionado = item;
     }
 
     atualizarTotalSacola();
@@ -341,8 +336,6 @@
     let total = 0;
     if (camisaSelecionada) total += camisaSelecionada.preco;
     if (shortSelecionado) total += shortSelecionado.preco;
-    if (acessorioSelecionado) total += acessorioSelecionado.preco;
-
     totalSacolaEl.textContent = total.toLocaleString();
   }
 
@@ -365,32 +358,22 @@
   });
 
   btnComprar.onclick = () => {
-    if (!camisaSelecionada) {
-      alert('Você deve selecionar pelo menos uma camisa!');
-      return;
-    }
-    if (!shortSelecionado) {
-      alert('Você deve selecionar um short!');
-      return;
-    }
+    if (!camisaSelecionada) return alert('Você deve selecionar pelo menos uma camisa!');
+    if (!shortSelecionado) return alert('Você deve selecionar um short!');
 
     const data = `${camisaSelecionada.id}|${shortSelecionado.dffs[0]}`;
 
-    enviarEventoCEF('loja:comprar', data);
-    enviarEventoCEF('loja:cancelar', '');
+    if (typeof cef !== 'undefined' && cef.emit) {
+      cef.emit("comprar_roupa", data);
+      cef.emit("loja_evento", "fechar_loja");
+    }
   };
 
   btnCancelar.onclick = () => {
-    enviarEventoCEF('loja:cancelar', '');
-  };
-
-  function enviarEventoCEF(eventName, data = '') {
     if (typeof cef !== 'undefined' && cef.emit) {
-      cef.emit(eventName, data);
-    } else {
-      console.log(`CEF emit evento: ${eventName}`, data);
+      cef.emit("loja_evento", "fechar_loja");
     }
-  }
+  };
 
   carregarItens(abaAtiva);
 </script>
