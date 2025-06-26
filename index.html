@@ -15,7 +15,6 @@
     .container {
       display: flex;
       justify-content: space-between;
-      align-items: stretch;
       height: 100vh;
       padding: 20px;
       box-sizing: border-box;
@@ -102,9 +101,20 @@
       cursor: pointer;
     }
 
-    .pagar { background: yellow; color: black; }
-    .cancelar { background: #888; color: white; }
-    .equipar { background: #0099ff; color: white; }
+    .botoes .equipar {
+      background: #007bff;
+      color: white;
+    }
+
+    .botoes .pagar {
+      background: yellow;
+      color: black;
+    }
+
+    .botoes .cancelar {
+      background: #888;
+      color: white;
+    }
 
     .notificacao {
       position: fixed;
@@ -126,7 +136,6 @@
   <div class="notificacao" id="notificacao">Compra realizada!</div>
 
   <div class="container">
-    <!-- Menu lateral -->
     <div class="menu-lateral">
       <div class="menu-icons">
         <img src="icone_camisa.png" onclick="trocarAba('camisas')" />
@@ -136,30 +145,38 @@
       <div class="roupas-grid" id="grid-roupas"></div>
     </div>
 
-    <!-- Painel de compra -->
     <div class="painel-compra">
       <div>
         <h2>Sale</h2>
         <p>YOU ARE CUSTOMIZING<br>YOUR CHARACTER</p>
-        <div class="preco" id="preco-total">VALOR TOTAL<br>0</div>
+        <div class="preco" id="preco-total">VALOR TOTAL<br>R$ 0</div>
       </div>
       <div class="botoes">
-        <button class="equipar" onclick="equiparPreview()">EQUIPAR</button>
-        <button class="pagar" onclick="pagarCompra()">PAGAR</button>
-        <button class="cancelar" onclick="cancelarCompra()">CANCELAR</button>
+        <button class="equipar" id="btnEquipar">EQUIPAR</button>
+        <button class="pagar" id="btnPagar">PAGAR</button>
+        <button class="cancelar" id="btnCancelar">CANCELAR</button>
       </div>
     </div>
   </div>
 
   <script>
     const roupas = {
-      camisas: [ { id: 1, preco: 1000, img: 'camisa1.png' }, { id: 2, preco: 12000, img: 'camisa2.png' } ],
-      shorts: [ { id: 1, preco: 3000, img: 'short1.png' }, { id: 2, preco: 5000, img: 'short2.png' } ],
-      acessorios: [ { id: 1, preco: 20000, img: 'bone.png' } ]
+      camisas: [
+        { id: 1, preco: 1000, img: 'camisa1.png' },
+        { id: 2, preco: 12000, img: 'camisa2.png' }
+      ],
+      shorts: [
+        { id: 1, preco: 3000, img: 'short1.png' },
+        { id: 2, preco: 5000, img: 'short2.png' }
+      ],
+      acessorios: [
+        { id: 1, preco: 20000, img: 'bone.png' }
+      ]
     };
 
     let abaAtual = 'camisas';
-    let selecionados = { camisa: null, shorts: null };
+    let camisaSelecionada = -1;
+    let shortSelecionado = -1;
     let precoTotal = 0;
 
     function renderizarRoupas() {
@@ -180,39 +197,40 @@
     }
 
     function selecionarRoupa(roupa) {
-      selecionados[abaAtual.slice(0, -1)] = roupa.id;
-      calcularTotal();
+      if (abaAtual === 'camisas') camisaSelecionada = roupa.id;
+      if (abaAtual === 'shorts') shortSelecionado = roupa.id;
+      atualizarPreco();
     }
 
-    function calcularTotal() {
+    function atualizarPreco() {
       precoTotal = 0;
-      for (let tipo in selecionados) {
-        const id = selecionados[tipo];
-        const item = roupas[tipo + 's'].find(r => r.id === id);
-        if (item) precoTotal += item.preco;
-      }
-      document.getElementById('preco-total').innerHTML = `VALOR TOTAL<br>${precoTotal}`;
+      if (camisaSelecionada > 0) precoTotal += roupas.camisas.find(r => r.id === camisaSelecionada).preco;
+      if (shortSelecionado > 0) precoTotal += roupas.shorts.find(r => r.id === shortSelecionado).preco;
+      document.getElementById('preco-total').innerHTML = `VALOR TOTAL<br>R$ ${precoTotal}`;
     }
 
-    function equiparPreview() {
-      if (!selecionados.camisa || !selecionados.shorts) return mostrarNotificacao("Escolha camisa e shorts!");
-      cef.emit("preview_skin", JSON.stringify({ camisa: selecionados.camisa, shorts: selecionados.shorts }));
-    }
-
-    function pagarCompra() {
-      cef.emit("comprar_roupa", JSON.stringify({ camisa: selecionados.camisa, shorts: selecionados.shorts, valor: precoTotal }));
-    }
-
-    function cancelarCompra() {
-      cef.emit("cancelar_roupa", "");
-    }
-
-    function mostrarNotificacao(texto) {
+    function mostrarNotificacao(msg) {
       const n = document.getElementById('notificacao');
-      n.textContent = texto;
+      n.textContent = msg;
       n.style.opacity = 1;
-      setTimeout(() => n.style.opacity = 0, 10000);
+      setTimeout(() => (n.style.opacity = 0), 10000);
     }
+
+    document.getElementById('btnEquipar').onclick = () => {
+      if (camisaSelecionada < 0 || shortSelecionado < 0) return mostrarNotificacao("Selecione camisa e short!");
+      cef.emit('loja:equipar', camisaSelecionada, shortSelecionado);
+      mostrarNotificacao("Visualização aplicada!");
+    };
+
+    document.getElementById('btnPagar').onclick = () => {
+      if (camisaSelecionada < 0 || shortSelecionado < 0) return mostrarNotificacao("Selecione camisa e short!");
+      cef.emit('loja:comprar', camisaSelecionada, shortSelecionado, precoTotal);
+      mostrarNotificacao("Compra realizada!");
+    };
+
+    document.getElementById('btnCancelar').onclick = () => {
+      cef.emit('loja:cancelar');
+    };
 
     renderizarRoupas();
   </script>
