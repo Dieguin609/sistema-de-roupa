@@ -11,7 +11,6 @@
       background-color: transparent;
       overflow: hidden;
     }
-
     .container {
       display: flex;
       justify-content: space-between;
@@ -19,7 +18,6 @@
       padding: 20px;
       box-sizing: border-box;
     }
-
     .menu-lateral {
       width: 300px;
       background: rgba(0, 0, 0, 0.8);
@@ -28,14 +26,12 @@
       display: flex;
       flex-direction: row;
     }
-
     .menu-icons {
       display: flex;
       flex-direction: column;
       gap: 12px;
       padding-right: 10px;
     }
-
     .menu-icons img {
       width: 40px;
       height: 40px;
@@ -44,7 +40,6 @@
       background: #fff;
       padding: 4px;
     }
-
     .roupas-grid {
       flex-grow: 1;
       display: grid;
@@ -53,7 +48,6 @@
       overflow-y: auto;
       max-height: 580px;
     }
-
     .roupa {
       background: purple;
       border-radius: 8px;
@@ -63,7 +57,6 @@
       background-position: center;
       cursor: pointer;
     }
-
     .painel-compra {
       width: 300px;
       background: rgba(0, 0, 0, 0.85);
@@ -74,24 +67,20 @@
       flex-direction: column;
       justify-content: space-between;
     }
-
     .painel-compra h2 {
       font-size: 28px;
       margin-bottom: 10px;
     }
-
     .painel-compra .preco {
       font-size: 30px;
       color: limegreen;
       margin: 20px 0;
     }
-
     .botoes {
       display: flex;
       flex-direction: column;
       gap: 10px;
     }
-
     .botoes button {
       font-size: 18px;
       padding: 10px;
@@ -100,22 +89,18 @@
       font-weight: bold;
       cursor: pointer;
     }
-
     .botoes .equipar {
       background: #007bff;
       color: white;
     }
-
     .botoes .pagar {
       background: yellow;
       color: black;
     }
-
     .botoes .cancelar {
       background: #888;
       color: white;
     }
-
     .notificacao {
       position: fixed;
       top: 20px;
@@ -133,145 +118,135 @@
   </style>
 </head>
 <body>
-  <div class="notificacao" id="notificacao">Compra realizada!</div>
 
-  <div class="container">
-    <div class="menu-lateral">
-      <div class="menu-icons">
-        <img src="icone_camisa.png" onclick="trocarAba('camisas')" />
-        <img src="icone_shorts.png" onclick="trocarAba('shorts')" />
-        <img src="icone_acessorios.png" onclick="trocarAba('acessorios')" />
-      </div>
-      <div class="roupas-grid" id="grid-roupas"></div>
+<div class="notificacao" id="notificacao"></div>
+
+<div class="container">
+  <div class="menu-lateral">
+    <div class="menu-icons">
+      <img src="icone_camisa.png" onclick="mostrarCamisas()" />
     </div>
+    <div class="roupas-grid" id="grid-roupas"></div>
+  </div>
 
-    <div class="painel-compra">
-      <div>
-        <h2>Sale</h2>
-        <p>YOU ARE CUSTOMIZING<br>YOUR CHARACTER</p>
-        <div class="preco" id="preco-total">VALOR TOTAL<br>R$ 0</div>
-      </div>
-      <div class="botoes">
-        <button class="equipar" id="btnEquipar">EQUIPAR</button>
-        <button class="pagar" id="btnPagar">PAGAR</button>
-        <button class="cancelar" id="btnCancelar">CANCELAR</button>
-      </div>
+  <div class="painel-compra">
+    <div>
+      <h2>Sale</h2>
+      <p>YOU ARE CUSTOMIZING<br>YOUR CHARACTER</p>
+      <div class="preco" id="preco-total">VALOR TOTAL<br>R$ 0</div>
+    </div>
+    <div class="botoes">
+      <button class="equipar" id="btnEquipar">EQUIPAR</button>
+      <button class="pagar" id="btnPagar">PAGAR</button>
+      <button class="cancelar" id="btnCancelar">CANCELAR</button>
     </div>
   </div>
-<!-- ... até o <body> e layout está tudo certo ... -->
-
-<!-- ADICIONE ISSO NO FINAL DO BODY ANTES DO </script> -->
+</div>
 
 <script>
-  const roupas = {
-    camisas: [
-      { id: 1, preco: 1000, img: 'camisa1.png' },
-      { id: 2, preco: 12000, img: 'camisa2.png' }
+  const camisas = [
+    { id: 1, img: 'camisa1.png' },
+    { id: 2, img: 'camisa2.png' }
+  ];
+
+  const shortsPorCamisa = {
+    1: [
+      { id: 1, preco: 3000, skinID: 24, img: 'short1.png' }, // camisa 1 + short 1
+      { id: 2, preco: 5000, skinID: 23, img: 'short2.png' }  // camisa 1 + short 2
     ],
-    shorts: [
-      { id: 1, preco: 3000, img: 'short1.png' },
-      { id: 2, preco: 5000, img: 'short2.png' }
-    ],
-    acessorios: [] // para não quebrar ao clicar no botão acessórios
+    2: [
+      { id: 1, preco: 3000, skinID: 15, img: 'short1.png' }, // camisa 2 + short 1
+      { id: 2, preco: 5000, skinID: 20, img: 'short2.png' }  // camisa 2 + short 2
+    ]
   };
 
-  let abaAtual = 'camisas';
-  let camisaSelecionada = -1;
-  let shortSelecionado = -1;
-  let skinCalculada = -1;
-  let precoTotal = 0;
+  let camisaSelecionada = null;
+  let shortSelecionado = null;
 
-  function obterSkinID(camisa, short) {
-    if (camisa == 1 && short == 1) return 24;
-    if (camisa == 1 && short == 2) return 23;
-    if (camisa == 2 && short == 1) return 15;
-    if (camisa == 2 && short == 2) return 20;
-    return -1;
-  }
-
-  function trocarAba(aba) {
-    abaAtual = aba;
-    renderizarRoupas(aba);
-  }
-
-  function renderizarRoupas(tipo) {
+  function mostrarCamisas() {
     const grid = document.getElementById('grid-roupas');
     grid.innerHTML = '';
-    roupas[tipo].forEach(roupa => {
+    camisaSelecionada = null;
+    shortSelecionado = null;
+    atualizarPreco(0);
+    desativarBotoes();
+
+    camisas.forEach(camisa => {
       const div = document.createElement('div');
       div.className = 'roupa';
-      div.style.backgroundImage = `url(${roupa.img})`;
-      div.onclick = () => selecionarRoupa(roupa, tipo, div);
+      div.style.backgroundImage = `url(${camisa.img})`;
+      div.onclick = () => mostrarShorts(camisa.id);
       grid.appendChild(div);
     });
   }
 
-  function selecionarRoupa(roupa, tipo, elemento) {
+  function mostrarShorts(camisaId) {
+    camisaSelecionada = camisaId;
+    const grid = document.getElementById('grid-roupas');
+    grid.innerHTML = '';
+
+    shortsPorCamisa[camisaId].forEach(short => {
+      const div = document.createElement('div');
+      div.className = 'roupa';
+      div.style.backgroundImage = `url(${short.img})`;
+      div.onclick = () => selecionarShort(short, div);
+      grid.appendChild(div);
+    });
+  }
+
+  function selecionarShort(short, elemento) {
     document.querySelectorAll('.roupa').forEach(e => e.style.outline = 'none');
     elemento.style.outline = '3px solid yellow';
 
-    if (tipo === 'camisas') camisaSelecionada = roupa.id;
-    if (tipo === 'shorts') shortSelecionado = roupa.id;
-
-    atualizarPreco();
-    calcularSkin();
+    shortSelecionado = short;
+    atualizarPreco(short.preco);
+    mostrarNotificacao(`Skin pronta: ${short.skinID}`);
+    ativarBotoes();
   }
 
-  function atualizarPreco() {
-    precoTotal = 0;
-    if (camisaSelecionada > 0) precoTotal += roupas.camisas.find(r => r.id === camisaSelecionada).preco;
-    if (shortSelecionado > 0) precoTotal += roupas.shorts.find(r => r.id === shortSelecionado).preco;
-    document.getElementById('preco-total').innerHTML = `VALOR TOTAL<br>R$ ${precoTotal}`;
+  function atualizarPreco(preco) {
+    document.getElementById('preco-total').innerHTML = `VALOR TOTAL<br>R$ ${preco}`;
   }
 
-  function calcularSkin() {
-    if (camisaSelecionada > 0 && shortSelecionado > 0) {
-      skinCalculada = obterSkinID(camisaSelecionada, shortSelecionado);
-      if (skinCalculada !== -1) {
-        mostrarNotificacao(`Skin combinada: ${skinCalculada}`);
-        document.getElementById('btnEquipar').disabled = false;
-        document.getElementById('btnPagar').disabled = false;
-      } else {
-        mostrarNotificacao("Combinação inválida!");
-        document.getElementById('btnEquipar').disabled = true;
-        document.getElementById('btnPagar').disabled = true;
-      }
-    }
+  function ativarBotoes() {
+    document.getElementById('btnEquipar').disabled = false;
+    document.getElementById('btnPagar').disabled = false;
+  }
+
+  function desativarBotoes() {
+    document.getElementById('btnEquipar').disabled = true;
+    document.getElementById('btnPagar').disabled = true;
   }
 
   function mostrarNotificacao(msg) {
     const n = document.getElementById('notificacao');
     n.textContent = msg;
     n.style.opacity = 1;
-    setTimeout(() => (n.style.opacity = 0), 10000);
+    setTimeout(() => (n.style.opacity = 0), 5000);
   }
 
-  // EQUIPAR
+  // BOTÕES
   document.getElementById('btnEquipar').onclick = () => {
-    if (skinCalculada !== -1) {
-      cef.emit("loja:equipar", skinCalculada.toString());
+    if (shortSelecionado) {
+      cef.emit("loja:equipar", shortSelecionado.skinID.toString());
       mostrarNotificacao("Visualização aplicada!");
     }
   };
 
-  // COMPRAR
   document.getElementById('btnPagar').onclick = () => {
-    if (skinCalculada !== -1) {
-      cef.emit("loja:comprar", skinCalculada.toString(), precoTotal.toString());
+    if (shortSelecionado) {
+      cef.emit("loja:comprar", shortSelecionado.skinID.toString(), shortSelecionado.preco.toString());
       mostrarNotificacao("Compra realizada!");
     }
   };
 
-  // CANCELAR
   document.getElementById('btnCancelar').onclick = () => {
     cef.emit("loja:cancelar");
   };
 
-  // INICIALIZAÇÃO
-  trocarAba('camisas');
-  document.getElementById('btnEquipar').disabled = true;
-  document.getElementById('btnPagar').disabled = true;
+  // Inicial
+  mostrarCamisas();
+  desativarBotoes();
 </script>
-
 </body>
 </html>
