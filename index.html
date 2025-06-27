@@ -233,33 +233,43 @@
     setTimeout(() => (n.style.opacity = 0), 10000);
   }
 
-  // EQUIPAR
+  // ✅ Botão EQUIPAR
   document.getElementById('btnEquipar').onclick = () => {
     if (camisaSelecionada < 0 || shortSelecionado < 0)
       return mostrarNotificacao("Selecione camisa e short!");
 
-    const data = `equiparSkin:${camisaSelecionada},${shortSelecionado}`;
-    cef.emit("loja:cef", data); // 👈 evento genérico para OnCEFEvent
+    const skinID = obterSkinID(camisaSelecionada, shortSelecionado);
+    if (skinID === -1)
+      return mostrarNotificacao("Combinação inválida!");
+
+    cef.emit('loja:equipar', { type: 1, value: skinID });
     mostrarNotificacao("Visualização aplicada!");
   };
 
-  // COMPRAR
+  // ✅ Botão COMPRAR
   document.getElementById('btnPagar').onclick = () => {
     if (camisaSelecionada < 0 || shortSelecionado < 0)
       return mostrarNotificacao("Selecione camisa e short!");
 
-    const data = `comprarSkin:${camisaSelecionada},${shortSelecionado}`;
-    cef.emit("loja:cef", data); // 👈 mesmo evento genérico
+    const skinID = obterSkinID(camisaSelecionada, shortSelecionado);
+    if (skinID === -1)
+      return mostrarNotificacao("Combinação inválida!");
+
+    cef.emit('loja:comprar',
+      { type: 1, value: skinID },
+      { type: 1, value: precoTotal }
+    );
     mostrarNotificacao("Compra realizada!");
   };
 
-  // CANCELAR
+  // ✅ Botão CANCELAR
   document.getElementById('btnCancelar').onclick = () => {
-    cef.emit("loja:cef", "cancelarCompra");
+    cef.emit('loja:cancelar');
   };
 
   renderizarRoupas();
 </script>
+
 
 
 
