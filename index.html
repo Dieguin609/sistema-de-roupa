@@ -125,6 +125,8 @@
   <div class="menu-lateral">
     <div class="menu-icons">
       <img src="icone_camisa.png" onclick="mostrarCamisas()" />
+      <img src="icone_shorts.png" onclick="mostrarShorts(camisaSelecionada)" />
+      <img src="icone_acessorios.png" onclick="mostrarAcessorios()" />
     </div>
     <div class="roupas-grid" id="grid-roupas"></div>
   </div>
@@ -151,14 +153,19 @@
 
   const shortsPorCamisa = {
     1: [
-      { id: 1, preco: 3000, comando: "camisa1short1", img: 'short1.png' }, // → SetPlayerSkin(playerid, 24);
-      { id: 2, preco: 5000, comando: "camisa1short2", img: 'short2.png' }  // → SetPlayerSkin(playerid, 23);
+      { id: 1, preco: 3000, skinId: 24, img: 'short1.png' },
+      { id: 2, preco: 5000, skinId: 23, img: 'short2.png' }
     ],
     2: [
-      { id: 1, preco: 3000, comando: "camisa2short1", img: 'short1.png' }, // → SetPlayerSkin(playerid, 15);
-      { id: 2, preco: 5000, comando: "camisa2short2", img: 'short2.png' }  // → SetPlayerSkin(playerid, 20);
+      { id: 1, preco: 3000, skinId: 15, img: 'short1.png' },
+      { id: 2, preco: 5000, skinId: 20, img: 'short2.png' }
     ]
   };
+
+  const acessorios = [
+    { id: 1, preco: 2000, img: 'acessorio1.png' },
+    { id: 2, preco: 2500, img: 'acessorio2.png' }
+  ];
 
   let camisaSelecionada = null;
   let shortSelecionado = null;
@@ -181,6 +188,11 @@
   }
 
   function mostrarShorts(camisaId) {
+    if (!camisaId) {
+      mostrarNotificacao("Selecione uma camisa antes!");
+      return;
+    }
+
     camisaSelecionada = camisaId;
     const grid = document.getElementById('grid-roupas');
     grid.innerHTML = '';
@@ -194,13 +206,26 @@
     });
   }
 
+  function mostrarAcessorios() {
+    const grid = document.getElementById('grid-roupas');
+    grid.innerHTML = '';
+
+    acessorios.forEach(acc => {
+      const div = document.createElement('div');
+      div.className = 'roupa';
+      div.style.backgroundImage = `url(${acc.img})`;
+      div.onclick = () => mostrarNotificacao("Acessório selecionado (não aplicável)");
+      grid.appendChild(div);
+    });
+  }
+
   function selecionarShort(short, elemento) {
     document.querySelectorAll('.roupa').forEach(e => e.style.outline = 'none');
     elemento.style.outline = '3px solid yellow';
 
     shortSelecionado = short;
     atualizarPreco(short.preco);
-    mostrarNotificacao(`Skin pronta: ${short.comando}`);
+    mostrarNotificacao(`Skin pronta: ID ${short.skinId}`);
     ativarBotoes();
   }
 
@@ -228,14 +253,14 @@
   // BOTÕES
   document.getElementById('btnEquipar').onclick = () => {
     if (shortSelecionado) {
-      cef.emit("loja:equipar", shortSelecionado.comando); // envia string tipo "camisa1short1"
+      cef.emit("loja:equipar", shortSelecionado.skinId.toString());
       mostrarNotificacao("Visualização aplicada!");
     }
   };
 
   document.getElementById('btnPagar').onclick = () => {
     if (shortSelecionado) {
-      cef.emit("loja:comprar", shortSelecionado.comando, shortSelecionado.preco.toString());
+      cef.emit("loja:comprar", shortSelecionado.skinId.toString(), shortSelecionado.preco.toString());
       mostrarNotificacao("Compra realizada!");
     }
   };
@@ -244,7 +269,6 @@
     cef.emit("loja:cancelar");
   };
 
-  // Inicial
   mostrarCamisas();
   desativarBotoes();
 </script>
