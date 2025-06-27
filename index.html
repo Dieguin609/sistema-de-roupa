@@ -194,12 +194,15 @@
   }
 
   function selecionarRoupa(roupa, div) {
-    document.querySelectorAll('.roupa').forEach(e => e.style.outline = 'none');
-    div.style.outline = '3px solid yellow';
-    if (abaAtual === 'camisas') camisaSelecionada = roupa.id;
-    else if (abaAtual === 'shorts') shortSelecionado = roupa.id;
-    atualizarPreco();
-  }
+  document.querySelectorAll('.roupa').forEach(e => e.style.outline = 'none');
+  div.style.outline = '3px solid yellow';
+
+  if (abaAtual === 'camisas') camisaSelecionada = roupa.id;
+  else if (abaAtual === 'shorts') shortSelecionado = roupa.id;
+
+  console.log("Selecionado: Camisa", camisaSelecionada, "Short", shortSelecionado);
+  atualizarPreco();
+}
 
   function renderizarRoupas() {
     const grid = document.getElementById('grid-roupas');
@@ -214,11 +217,20 @@
   }
 
   document.getElementById('btnEquipar').onclick = () => {
-    const skinID = obterSkinID(camisaSelecionada, shortSelecionado);
-    if (skinID === -1) return alert("Combinação inválida!");
+  console.log("Camisa:", camisaSelecionada, "Short:", shortSelecionado);
+  if (camisaSelecionada < 0 || shortSelecionado < 0) {
+    return mostrarNotificacao("Selecione camisa e short!");
+  }
 
-    cef.emit('loja:equipar', skinID.toString()); // ENVIA string pura
-  };
+  const skinID = obterSkinID(camisaSelecionada, shortSelecionado);
+  console.log("Skin ID enviado para o jogo:", skinID);
+
+  if (skinID === -1) return mostrarNotificacao("Combinação inválida!");
+
+  cef.emit('loja:equipar', skinID.toString());
+  mostrarNotificacao("Visualização aplicada!");
+};
+
 
   document.getElementById('btnPagar').onclick = () => {
     const skinID = obterSkinID(camisaSelecionada, shortSelecionado);
