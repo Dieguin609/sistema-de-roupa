@@ -167,16 +167,12 @@
     shorts: [
       { id: 1, preco: 3000, img: 'short1.png' },
       { id: 2, preco: 5000, img: 'short2.png' }
-    ],
-    acessorios: [
-      { id: 1, preco: 20000, img: 'bone.png' }
     ]
   };
 
   let abaAtual = 'camisas';
   let camisaSelecionada = -1;
   let shortSelecionado = -1;
-  let precoTotal = 0;
 
   function obterSkinID(camisa, short) {
     if (camisa == 1 && short == 1) return 24;
@@ -184,6 +180,25 @@
     if (camisa == 2 && short == 1) return 15;
     if (camisa == 2 && short == 2) return 20;
     return -1;
+  }
+
+  function atualizarPreco() {
+    let preco = 0;
+    if (camisaSelecionada > 0)
+      preco += roupas.camisas.find(r => r.id === camisaSelecionada).preco || 0;
+    if (shortSelecionado > 0)
+      preco += roupas.shorts.find(r => r.id === shortSelecionado).preco || 0;
+
+    document.getElementById('preco-total').innerHTML = `VALOR TOTAL<br>R$ ${preco}`;
+    return preco;
+  }
+
+  function selecionarRoupa(roupa, div) {
+    document.querySelectorAll('.roupa').forEach(e => e.style.outline = 'none');
+    div.style.outline = '3px solid yellow';
+    if (abaAtual === 'camisas') camisaSelecionada = roupa.id;
+    else if (abaAtual === 'shorts') shortSelecionado = roupa.id;
+    atualizarPreco();
   }
 
   function renderizarRoupas() {
@@ -198,81 +213,32 @@
     });
   }
 
+  document.getElementById('btnEquipar').onclick = () => {
+    const skinID = obterSkinID(camisaSelecionada, shortSelecionado);
+    if (skinID === -1) return alert("Combinação inválida!");
+
+    cef.emit('loja:equipar', skinID.toString()); // ENVIA string pura
+  };
+
+  document.getElementById('btnPagar').onclick = () => {
+    const skinID = obterSkinID(camisaSelecionada, shortSelecionado);
+    if (skinID === -1) return alert("Combinação inválida!");
+    const preco = atualizarPreco();
+    cef.emit('loja:comprar', skinID.toString(), preco.toString()); // TUDO STRING
+  };
+
+  document.getElementById('btnCancelar').onclick = () => {
+    cef.emit('loja:cancelar');
+  };
+
   function trocarAba(aba) {
     abaAtual = aba;
     renderizarRoupas();
   }
 
-  function selecionarRoupa(roupa, elemento) {
-    document.querySelectorAll('.roupa').forEach(e => e.style.outline = 'none');
-
-    if (abaAtual === 'camisas') {
-      camisaSelecionada = roupa.id;
-    } else if (abaAtual === 'shorts') {
-      shortSelecionado = roupa.id;
-    }
-
-    elemento.style.outline = '3px solid yellow';
-    atualizarPreco();
-  }
-
-  function atualizarPreco() {
-    precoTotal = 0;
-    if (camisaSelecionada > 0) {
-      const camisa = roupas.camisas.find(r => r.id === camisaSelecionada);
-      if (camisa) precoTotal += camisa.preco;
-    }
-    if (shortSelecionado > 0) {
-      const short = roupas.shorts.find(r => r.id === shortSelecionado);
-      if (short) precoTotal += short.preco;
-    }
-    document.getElementById('preco-total').innerHTML = `VALOR TOTAL<br>R$ ${precoTotal}`;
-  }
-
-  function mostrarNotificacao(msg) {
-    const n = document.getElementById('notificacao');
-    n.textContent = msg;
-    n.style.opacity = 1;
-    setTimeout(() => (n.style.opacity = 0), 10000);
-  }
-
-  // ✅ Botão EQUIPAR (envia apenas o skinID como string simples)
-  document.getElementById('btnEquipar').onclick = () => {
-    if (camisaSelecionada < 0 || shortSelecionado < 0) {
-      return mostrarNotificacao("Selecione camisa e short!");
-    }
-
-    const skinID = obterSkinID(camisaSelecionada, shortSelecionado);
-    if (skinID === -1) {
-      return mostrarNotificacao("Combinação inválida!");
-    }
-
-    cef.emit('loja:equipar', String(skinID));
-    mostrarNotificacao("Visualização aplicada!");
-  };
-
-  // ✅ Botão COMPRAR (envia skinID e precoTotal como strings simples)
-  document.getElementById('btnPagar').onclick = () => {
-    if (camisaSelecionada < 0 || shortSelecionado < 0) {
-      return mostrarNotificacao("Selecione camisa e short!");
-    }
-
-    const skinID = obterSkinID(camisaSelecionada, shortSelecionado);
-    if (skinID === -1) {
-      return mostrarNotificacao("Combinação inválida!");
-    }
-
-    cef.emit('loja:comprar', String(skinID), String(precoTotal));
-    mostrarNotificacao("Compra realizada!");
-  };
-
-  // ✅ Botão CANCELAR
-  document.getElementById('btnCancelar').onclick = () => {
-    cef.emit('loja:cancelar');
-  };
-
   renderizarRoupas();
 </script>
+
 
 </body>
 </html>
