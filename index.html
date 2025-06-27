@@ -173,6 +173,7 @@
   let abaAtual = 'camisas';
   let camisaSelecionada = -1;
   let shortSelecionado = -1;
+  let precoTotal = 0;
 
   function obterSkinID(camisa, short) {
     if (camisa == 1 && short == 1) return 24;
@@ -181,28 +182,6 @@
     if (camisa == 2 && short == 2) return 20;
     return -1;
   }
-
-  function atualizarPreco() {
-    let preco = 0;
-    if (camisaSelecionada > 0)
-      preco += roupas.camisas.find(r => r.id === camisaSelecionada).preco || 0;
-    if (shortSelecionado > 0)
-      preco += roupas.shorts.find(r => r.id === shortSelecionado).preco || 0;
-
-    document.getElementById('preco-total').innerHTML = `VALOR TOTAL<br>R$ ${preco}`;
-    return preco;
-  }
-
-  function selecionarRoupa(roupa, div) {
-  document.querySelectorAll('.roupa').forEach(e => e.style.outline = 'none');
-  div.style.outline = '3px solid yellow';
-
-  if (abaAtual === 'camisas') camisaSelecionada = roupa.id;
-  else if (abaAtual === 'shorts') shortSelecionado = roupa.id;
-
-  console.log("Selecionado: Camisa", camisaSelecionada, "Short", shortSelecionado);
-  atualizarPreco();
-}
 
   function renderizarRoupas() {
     const grid = document.getElementById('grid-roupas');
@@ -216,40 +195,72 @@
     });
   }
 
-  document.getElementById('btnEquipar').onclick = () => {
-  console.log("Camisa:", camisaSelecionada, "Short:", shortSelecionado);
-  if (camisaSelecionada < 0 || shortSelecionado < 0) {
-    return mostrarNotificacao("Selecione camisa e short!");
-  }
-
-  const skinID = obterSkinID(camisaSelecionada, shortSelecionado);
-  console.log("Skin ID enviado para o jogo:", skinID);
-
-  if (skinID === -1) return mostrarNotificacao("Combinação inválida!");
-
-  cef.emit('loja:equipar', skinID.toString());
-  mostrarNotificacao("Visualização aplicada!");
-};
-
-
-  document.getElementById('btnPagar').onclick = () => {
-    const skinID = obterSkinID(camisaSelecionada, shortSelecionado);
-    if (skinID === -1) return alert("Combinação inválida!");
-    const preco = atualizarPreco();
-    cef.emit('loja:comprar', skinID.toString(), preco.toString()); // TUDO STRING
-  };
-
-  document.getElementById('btnCancelar').onclick = () => {
-    cef.emit('loja:cancelar');
-  };
-
   function trocarAba(aba) {
     abaAtual = aba;
     renderizarRoupas();
   }
 
+  function selecionarRoupa(roupa, elemento) {
+    document.querySelectorAll('.roupa').forEach(e => e.style.outline = 'none');
+
+    if (abaAtual === 'camisas') {
+      camisaSelecionada = roupa.id;
+    } else if (abaAtual === 'shorts') {
+      shortSelecionado = roupa.id;
+    }
+
+    elemento.style.outline = '3px solid yellow';
+    atualizarPreco();
+  }
+
+  function atualizarPreco() {
+    precoTotal = 0;
+    if (camisaSelecionada > 0) {
+      const camisa = roupas.camisas.find(r => r.id === camisaSelecionada);
+      if (camisa) precoTotal += camisa.preco;
+    }
+    if (shortSelecionado > 0) {
+      const short = roupas.shorts.find(r => r.id === shortSelecionado);
+      if (short) precoTotal += short.preco;
+    }
+    document.getElementById('preco-total').innerHTML = `VALOR TOTAL<br>R$ ${precoTotal}`;
+  }
+
+  function mostrarNotificacao(msg) {
+    const n = document.getElementById('notificacao');
+    n.textContent = msg;
+    n.style.opacity = 1;
+    setTimeout(() => (n.style.opacity = 0), 10000);
+  }
+
+  // EQUIPAR
+  document.getElementById('btnEquipar').onclick = () => {
+    if (camisaSelecionada < 0 || shortSelecionado < 0)
+      return mostrarNotificacao("Selecione camisa e short!");
+
+    const data = `equiparSkin:${camisaSelecionada},${shortSelecionado}`;
+    cef.emit("loja:cef", data); // 👈 evento genérico para OnCEFEvent
+    mostrarNotificacao("Visualização aplicada!");
+  };
+
+  // COMPRAR
+  document.getElementById('btnPagar').onclick = () => {
+    if (camisaSelecionada < 0 || shortSelecionado < 0)
+      return mostrarNotificacao("Selecione camisa e short!");
+
+    const data = `comprarSkin:${camisaSelecionada},${shortSelecionado}`;
+    cef.emit("loja:cef", data); // 👈 mesmo evento genérico
+    mostrarNotificacao("Compra realizada!");
+  };
+
+  // CANCELAR
+  document.getElementById('btnCancelar').onclick = () => {
+    cef.emit("loja:cef", "cancelarCompra");
+  };
+
   renderizarRoupas();
 </script>
+
 
 
 </body>
