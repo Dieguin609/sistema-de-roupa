@@ -247,7 +247,7 @@
       return mostrarNotificacao("Combinação inválida!");
     }
 
-    cef.emit('loja:equipar', { type: 1, value: skinID }); // CEF_INTEGER
+    cef.emit('loja:equipar', skinID);// CEF_INTEGER
     mostrarNotificacao("Visualização aplicada!");
   };
 
