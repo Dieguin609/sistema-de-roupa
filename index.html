@@ -188,23 +188,30 @@
   }
 
   function mostrarShorts(camisaId) {
-    if (!camisaId) {
-      mostrarNotificacao("Selecione uma camisa antes!");
-      return;
-    }
+  camisaSelecionada = camisaId;
+  const grid = document.getElementById('grid-roupas');
+  grid.innerHTML = '';
 
-    camisaSelecionada = camisaId;
-    const grid = document.getElementById('grid-roupas');
-    grid.innerHTML = '';
+  shortsPorCamisa[camisaId].forEach((short, index) => {
+    const div = document.createElement('div');
+    div.className = 'roupa';
+    div.style.backgroundImage = `url(${short.img})`;
 
-    shortsPorCamisa[camisaId].forEach(short => {
-      const div = document.createElement('div');
-      div.className = 'roupa';
-      div.style.backgroundImage = `url(${short.img})`;
-      div.onclick = () => selecionarShort(short, div);
-      grid.appendChild(div);
-    });
-  }
+    // Define o comando de forma única
+    const comando = `camisa${camisaId}short${short.id}`;
+
+    div.onclick = () => {
+      shortSelecionado = {
+        ...short,
+        comando: comando // comando dinâmico real
+      };
+      selecionarShort(shortSelecionado, div);
+    };
+
+    grid.appendChild(div);
+  });
+}
+
 
   function mostrarAcessorios() {
     const grid = document.getElementById('grid-roupas');
