@@ -158,7 +158,6 @@
       </div>
     </div>
   </div>
-
  <script>
   const roupas = {
     camisas: [
@@ -179,7 +178,6 @@
   let shortSelecionado = -1;
   let precoTotal = 0;
 
-  // Lógica que determina o ID da skin com base na combinação
   function obterSkinID(camisa, short) {
     if (camisa == 1 && short == 1) return 24;
     if (camisa == 1 && short == 2) return 23;
@@ -195,7 +193,7 @@
       const div = document.createElement('div');
       div.className = 'roupa';
       div.style.backgroundImage = `url(${roupa.img})`;
-      div.onclick = () => selecionarRoupa(roupa);
+      div.onclick = () => selecionarRoupa(roupa, div);
       grid.appendChild(div);
     });
   }
@@ -205,16 +203,32 @@
     renderizarRoupas();
   }
 
-  function selecionarRoupa(roupa) {
-    if (abaAtual === 'camisas') camisaSelecionada = roupa.id;
-    if (abaAtual === 'shorts') shortSelecionado = roupa.id;
+  function selecionarRoupa(roupa, elemento) {
+    // Reset visual da seleção
+    document.querySelectorAll('.roupa').forEach(e => e.style.outline = 'none');
+
+    if (abaAtual === 'camisas') {
+      camisaSelecionada = roupa.id;
+    } else if (abaAtual === 'shorts') {
+      shortSelecionado = roupa.id;
+    }
+
+    // Marcar a peça clicada visualmente
+    elemento.style.outline = '3px solid yellow';
+
     atualizarPreco();
   }
 
   function atualizarPreco() {
     precoTotal = 0;
-    if (camisaSelecionada > 0) precoTotal += roupas.camisas.find(r => r.id === camisaSelecionada).preco;
-    if (shortSelecionado > 0) precoTotal += roupas.shorts.find(r => r.id === shortSelecionado).preco;
+    if (camisaSelecionada > 0) {
+      const camisa = roupas.camisas.find(r => r.id === camisaSelecionada);
+      if (camisa) precoTotal += camisa.preco;
+    }
+    if (shortSelecionado > 0) {
+      const short = roupas.shorts.find(r => r.id === shortSelecionado);
+      if (short) precoTotal += short.preco;
+    }
     document.getElementById('preco-total').innerHTML = `VALOR TOTAL<br>R$ ${precoTotal}`;
   }
 
@@ -225,26 +239,20 @@
     setTimeout(() => (n.style.opacity = 0), 10000);
   }
 
-  // Equipar (preview)
   document.getElementById('btnEquipar').onclick = () => {
-    if (camisaSelecionada < 0 || shortSelecionado < 0) {
+    if (camisaSelecionada < 0 || shortSelecionado < 0)
       return mostrarNotificacao("Selecione camisa e short!");
-    }
 
     const skinID = obterSkinID(camisaSelecionada, shortSelecionado);
     if (skinID == -1) return mostrarNotificacao("Combinação inválida!");
 
-    console.log("Camisa:", camisaSelecionada, "Short:", shortSelecionado);
-    console.log("SkinID enviado:", obterSkinID(camisaSelecionada, shortSelecionado));
     cef.emit('loja:equipar', skinID);
     mostrarNotificacao("Visualização aplicada!");
   };
 
-  // Comprar
   document.getElementById('btnPagar').onclick = () => {
-    if (camisaSelecionada < 0 || shortSelecionado < 0) {
+    if (camisaSelecionada < 0 || shortSelecionado < 0)
       return mostrarNotificacao("Selecione camisa e short!");
-    }
 
     const skinID = obterSkinID(camisaSelecionada, shortSelecionado);
     if (skinID == -1) return mostrarNotificacao("Combinação inválida!");
@@ -253,13 +261,13 @@
     mostrarNotificacao("Compra realizada!");
   };
 
-  // Cancelar
   document.getElementById('btnCancelar').onclick = () => {
     cef.emit('loja:cancelar');
   };
 
   renderizarRoupas();
 </script>
+
 
 </body>
 </html>
