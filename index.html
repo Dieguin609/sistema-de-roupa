@@ -217,10 +217,13 @@
     }
 
     document.getElementById('btnEquipar').onclick = () => {
-      if (camisaSelecionada < 0 || shortSelecionado < 0) return mostrarNotificacao("Selecione camisa e short!");
-      cef.emit('loja:equipar', camisaSelecionada, shortSelecionado);
-      mostrarNotificacao("Visualização aplicada!");
-    };
+  if (camisaSelecionada < 0 || shortSelecionado < 0)
+    return mostrarNotificacao("Selecione camisa e short!");
+
+  const data = `${camisaSelecionada},${shortSelecionado}`;
+  cef.emit('loja:equipar', data);
+  mostrarNotificacao("Visualização aplicada!");
+};
 
     document.getElementById('btnPagar').onclick = () => {
       if (camisaSelecionada < 0 || shortSelecionado < 0) return mostrarNotificacao("Selecione camisa e short!");
