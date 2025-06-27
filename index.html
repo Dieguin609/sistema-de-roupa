@@ -248,7 +248,7 @@
   if (skinID == -1) return mostrarNotificacao("Combinação inválida!");
 
   // Enviar como número corretamente
-  cef.emit('loja:equipar', CEFINT(skinID));
+  cef.emit('loja:equipar', Number(skinID)); // Força tipo integer
   mostrarNotificacao("Visualização aplicada!");
 };
 
