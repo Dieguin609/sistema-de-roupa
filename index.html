@@ -240,15 +240,18 @@
   }
 
   document.getElementById('btnEquipar').onclick = () => {
-    if (camisaSelecionada < 0 || shortSelecionado < 0)
-      return mostrarNotificacao("Selecione camisa e short!");
+  if (camisaSelecionada < 0 || shortSelecionado < 0) {
+    return mostrarNotificacao("Selecione camisa e short!");
+  }
 
-    const skinID = obterSkinID(camisaSelecionada, shortSelecionado);
-    if (skinID == -1) return mostrarNotificacao("Combinação inválida!");
+  const skinID = obterSkinID(camisaSelecionada, shortSelecionado);
+  if (skinID == -1) return mostrarNotificacao("Combinação inválida!");
 
-    cef.emit('loja:equipar', skinID);
-    mostrarNotificacao("Visualização aplicada!");
-  };
+  // Enviar como número corretamente
+  cef.emit('loja:equipar', CEFINT(skinID));
+  mostrarNotificacao("Visualização aplicada!");
+};
+
 
   document.getElementById('btnPagar').onclick = () => {
     if (camisaSelecionada < 0 || shortSelecionado < 0)
