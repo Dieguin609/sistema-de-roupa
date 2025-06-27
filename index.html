@@ -198,14 +198,12 @@
     precoTotal = 0;
     if (camisaSelecionada > 0) precoTotal += roupas.camisas.find(r => r.id === camisaSelecionada).preco;
     if (shortSelecionado > 0) precoTotal += roupas.shorts.find(r => r.id === shortSelecionado).preco;
-
     document.getElementById('preco-total').innerHTML = `VALOR TOTAL<br>R$ ${precoTotal}`;
   }
 
   function calcularSkin() {
     if (camisaSelecionada > 0 && shortSelecionado > 0) {
       skinCalculada = obterSkinID(camisaSelecionada, shortSelecionado);
-
       if (skinCalculada !== -1) {
         mostrarNotificacao(`Skin combinada: ${skinCalculada}`);
         document.getElementById('btnEquipar').disabled = false;
@@ -225,23 +223,23 @@
     setTimeout(() => (n.style.opacity = 0), 10000);
   }
 
-  // Botão EQUIPAR → Agora só envia o número da skin já calculada
+  // 👉 EQUIPAR
   document.getElementById('btnEquipar').onclick = () => {
     if (skinCalculada !== -1) {
-      cef.emit("loja:equipar", skinCalculada.toString());
+      cef.emit("loja:equipar", skinCalculada.toString()); // envia apenas o ID da skin como string
       mostrarNotificacao("Visualização aplicada!");
     }
   };
 
-  // Botão COMPRAR → Também só envia o skinID já validado
+  // 👉 COMPRAR
   document.getElementById('btnPagar').onclick = () => {
     if (skinCalculada !== -1) {
-      cef.emit("loja:comprar", `${skinCalculada},${precoTotal}`);
+      cef.emit("loja:comprar", skinCalculada.toString(), precoTotal.toString()); // envia dois dados
       mostrarNotificacao("Compra realizada!");
     }
   };
 
-  // Botão CANCELAR
+  // 👉 CANCELAR
   document.getElementById('btnCancelar').onclick = () => {
     cef.emit("loja:cancelar");
   };
@@ -266,6 +264,5 @@
   document.getElementById('btnEquipar').disabled = true;
   document.getElementById('btnPagar').disabled = true;
 </script>
-
 </body>
 </html>
