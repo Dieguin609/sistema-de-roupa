@@ -204,7 +204,6 @@
   }
 
   function selecionarRoupa(roupa, elemento) {
-    // Reset visual da seleção
     document.querySelectorAll('.roupa').forEach(e => e.style.outline = 'none');
 
     if (abaAtual === 'camisas') {
@@ -213,9 +212,7 @@
       shortSelecionado = roupa.id;
     }
 
-    // Marcar a peça clicada visualmente
     elemento.style.outline = '3px solid yellow';
-
     atualizarPreco();
   }
 
@@ -239,40 +236,44 @@
     setTimeout(() => (n.style.opacity = 0), 10000);
   }
 
+  // ✅ Botão EQUIPAR (envia tipo correto)
   document.getElementById('btnEquipar').onclick = () => {
-  if (camisaSelecionada < 0 || shortSelecionado < 0) {
-    return mostrarNotificacao("Selecione camisa e short!");
-  }
-
-  const skinID = obterSkinID(camisaSelecionada, shortSelecionado);
-  if (skinID === -1) {
-    return mostrarNotificacao("Combinação inválida!");
-  }
-
-  cef.emit('loja:equipar', { type: 1, value: skinID }); // 👈 Aqui está o segredo!
-  mostrarNotificacao("Visualização aplicada!");
-};
-
-
-
-  document.getElementById('btnPagar').onclick = () => {
-    if (camisaSelecionada < 0 || shortSelecionado < 0)
+    if (camisaSelecionada < 0 || shortSelecionado < 0) {
       return mostrarNotificacao("Selecione camisa e short!");
+    }
 
     const skinID = obterSkinID(camisaSelecionada, shortSelecionado);
-    if (skinID == -1) return mostrarNotificacao("Combinação inválida!");
+    if (skinID === -1) {
+      return mostrarNotificacao("Combinação inválida!");
+    }
 
-    cef.emit('loja:comprar', skinID, precoTotal);
+    cef.emit('loja:equipar', { type: 1, value: skinID }); // CEF_INTEGER
+    mostrarNotificacao("Visualização aplicada!");
+  };
+
+  // ✅ Botão COMPRAR (envia dois inteiros tipados)
+  document.getElementById('btnPagar').onclick = () => {
+    if (camisaSelecionada < 0 || shortSelecionado < 0) {
+      return mostrarNotificacao("Selecione camisa e short!");
+    }
+
+    const skinID = obterSkinID(camisaSelecionada, shortSelecionado);
+    if (skinID === -1) return mostrarNotificacao("Combinação inválida!");
+
+    cef.emit('loja:comprar',
+      { type: 1, value: skinID },
+      { type: 1, value: precoTotal }
+    );
+
     mostrarNotificacao("Compra realizada!");
   };
 
+  // ✅ Botão CANCELAR
   document.getElementById('btnCancelar').onclick = () => {
     cef.emit('loja:cancelar');
   };
 
   renderizarRoupas();
 </script>
-
-
 </body>
 </html>
