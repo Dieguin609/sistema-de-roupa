@@ -151,12 +151,12 @@
 
   const shortsPorCamisa = {
     1: [
-      { id: 1, preco: 3000, skinID: 24, img: 'short1.png' }, // camisa 1 + short 1
-      { id: 2, preco: 5000, skinID: 23, img: 'short2.png' }  // camisa 1 + short 2
+      { id: 1, preco: 3000, comando: "camisa1short1", img: 'short1.png' }, // → SetPlayerSkin(playerid, 24);
+      { id: 2, preco: 5000, comando: "camisa1short2", img: 'short2.png' }  // → SetPlayerSkin(playerid, 23);
     ],
     2: [
-      { id: 1, preco: 3000, skinID: 15, img: 'short1.png' }, // camisa 2 + short 1
-      { id: 2, preco: 5000, skinID: 20, img: 'short2.png' }  // camisa 2 + short 2
+      { id: 1, preco: 3000, comando: "camisa2short1", img: 'short1.png' }, // → SetPlayerSkin(playerid, 15);
+      { id: 2, preco: 5000, comando: "camisa2short2", img: 'short2.png' }  // → SetPlayerSkin(playerid, 20);
     ]
   };
 
@@ -200,7 +200,7 @@
 
     shortSelecionado = short;
     atualizarPreco(short.preco);
-    mostrarNotificacao(`Skin pronta: ${short.skinID}`);
+    mostrarNotificacao(`Skin pronta: ${short.comando}`);
     ativarBotoes();
   }
 
@@ -228,14 +228,14 @@
   // BOTÕES
   document.getElementById('btnEquipar').onclick = () => {
     if (shortSelecionado) {
-      cef.emit("loja:equipar", shortSelecionado.skinID.toString());
+      cef.emit("loja:equipar", shortSelecionado.comando); // envia string tipo "camisa1short1"
       mostrarNotificacao("Visualização aplicada!");
     }
   };
 
   document.getElementById('btnPagar').onclick = () => {
     if (shortSelecionado) {
-      cef.emit("loja:comprar", shortSelecionado.skinID.toString(), shortSelecionado.preco.toString());
+      cef.emit("loja:comprar", shortSelecionado.comando, shortSelecionado.preco.toString());
       mostrarNotificacao("Compra realizada!");
     }
   };
@@ -248,5 +248,6 @@
   mostrarCamisas();
   desativarBotoes();
 </script>
+
 </body>
 </html>
