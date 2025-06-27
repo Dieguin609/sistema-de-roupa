@@ -158,6 +158,10 @@
       </div>
     </div>
   </div>
+<!-- ... até o <body> e layout está tudo certo ... -->
+
+<!-- ADICIONE ISSO NO FINAL DO BODY ANTES DO </script> -->
+
 <script>
   const roupas = {
     camisas: [
@@ -167,9 +171,11 @@
     shorts: [
       { id: 1, preco: 3000, img: 'short1.png' },
       { id: 2, preco: 5000, img: 'short2.png' }
-    ]
+    ],
+    acessorios: [] // para não quebrar ao clicar no botão acessórios
   };
 
+  let abaAtual = 'camisas';
   let camisaSelecionada = -1;
   let shortSelecionado = -1;
   let skinCalculada = -1;
@@ -183,12 +189,29 @@
     return -1;
   }
 
+  function trocarAba(aba) {
+    abaAtual = aba;
+    renderizarRoupas(aba);
+  }
+
+  function renderizarRoupas(tipo) {
+    const grid = document.getElementById('grid-roupas');
+    grid.innerHTML = '';
+    roupas[tipo].forEach(roupa => {
+      const div = document.createElement('div');
+      div.className = 'roupa';
+      div.style.backgroundImage = `url(${roupa.img})`;
+      div.onclick = () => selecionarRoupa(roupa, tipo, div);
+      grid.appendChild(div);
+    });
+  }
+
   function selecionarRoupa(roupa, tipo, elemento) {
     document.querySelectorAll('.roupa').forEach(e => e.style.outline = 'none');
     elemento.style.outline = '3px solid yellow';
 
-    if (tipo === 'camisa') camisaSelecionada = roupa.id;
-    if (tipo === 'short') shortSelecionado = roupa.id;
+    if (tipo === 'camisas') camisaSelecionada = roupa.id;
+    if (tipo === 'shorts') shortSelecionado = roupa.id;
 
     atualizarPreco();
     calcularSkin();
@@ -223,46 +246,32 @@
     setTimeout(() => (n.style.opacity = 0), 10000);
   }
 
-  // 👉 EQUIPAR
+  // EQUIPAR
   document.getElementById('btnEquipar').onclick = () => {
     if (skinCalculada !== -1) {
-      cef.emit("loja:equipar", skinCalculada.toString()); // envia apenas o ID da skin como string
+      cef.emit("loja:equipar", skinCalculada.toString());
       mostrarNotificacao("Visualização aplicada!");
     }
   };
 
-  // 👉 COMPRAR
+  // COMPRAR
   document.getElementById('btnPagar').onclick = () => {
     if (skinCalculada !== -1) {
-      cef.emit("loja:comprar", skinCalculada.toString(), precoTotal.toString()); // envia dois dados
+      cef.emit("loja:comprar", skinCalculada.toString(), precoTotal.toString());
       mostrarNotificacao("Compra realizada!");
     }
   };
 
-  // 👉 CANCELAR
+  // CANCELAR
   document.getElementById('btnCancelar').onclick = () => {
     cef.emit("loja:cancelar");
   };
 
-  function renderizarRoupas(tipo) {
-    const grid = document.getElementById('grid-roupas');
-    grid.innerHTML = '';
-    roupas[tipo].forEach(roupa => {
-      const div = document.createElement('div');
-      div.className = 'roupa';
-      div.style.backgroundImage = `url(${roupa.img})`;
-      div.onclick = () => selecionarRoupa(roupa, tipo, div);
-      grid.appendChild(div);
-    });
-  }
-
-  // Inicialização
-  renderizarRoupas('camisas');
-  document.getElementById('aba-camisas').onclick = () => renderizarRoupas('camisas');
-  document.getElementById('aba-shorts').onclick = () => renderizarRoupas('shorts');
-
+  // INICIALIZAÇÃO
+  trocarAba('camisas');
   document.getElementById('btnEquipar').disabled = true;
   document.getElementById('btnPagar').disabled = true;
 </script>
+
 </body>
 </html>
