@@ -245,12 +245,14 @@
   }
 
   const skinID = obterSkinID(camisaSelecionada, shortSelecionado);
-  if (skinID == -1) return mostrarNotificacao("Combinação inválida!");
+  if (skinID === -1) {
+    return mostrarNotificacao("Combinação inválida!");
+  }
 
-  // Enviar como número corretamente
-  cef.emit('loja:equipar', Number(skinID)); // Força tipo integer
+  cef.emit('loja:equipar', { type: 1, value: skinID }); // 👈 Aqui está o segredo!
   mostrarNotificacao("Visualização aplicada!");
 };
+
 
 
   document.getElementById('btnPagar').onclick = () => {
