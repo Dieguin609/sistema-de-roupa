@@ -260,7 +260,7 @@
   // BOTÕES
   document.getElementById('btnEquipar').onclick = () => {
     if (shortSelecionado) {
-      cef.emit("loja:equipar", shortSelecionado.skinId.toString());
+      cef.emit("loja:equipar", shortSelecionado.comando);
       mostrarNotificacao("Visualização aplicada!");
     }
   };
