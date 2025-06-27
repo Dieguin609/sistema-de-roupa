@@ -158,7 +158,7 @@
       </div>
     </div>
   </div>
- <script>
+<script>
   const roupas = {
     camisas: [
       { id: 1, preco: 1000, img: 'camisa1.png' },
@@ -236,7 +236,7 @@
     setTimeout(() => (n.style.opacity = 0), 10000);
   }
 
-  // ✅ Botão EQUIPAR (envia tipo correto)
+  // ✅ Botão EQUIPAR (envia apenas o skinID como string simples)
   document.getElementById('btnEquipar').onclick = () => {
     if (camisaSelecionada < 0 || shortSelecionado < 0) {
       return mostrarNotificacao("Selecione camisa e short!");
@@ -247,24 +247,22 @@
       return mostrarNotificacao("Combinação inválida!");
     }
 
-    cef.emit('loja:equipar', skinID.toString());
+    cef.emit('loja:equipar', String(skinID));
     mostrarNotificacao("Visualização aplicada!");
   };
 
-  // ✅ Botão COMPRAR (envia dois inteiros tipados)
+  // ✅ Botão COMPRAR (envia skinID e precoTotal como strings simples)
   document.getElementById('btnPagar').onclick = () => {
     if (camisaSelecionada < 0 || shortSelecionado < 0) {
       return mostrarNotificacao("Selecione camisa e short!");
     }
 
     const skinID = obterSkinID(camisaSelecionada, shortSelecionado);
-    if (skinID === -1) return mostrarNotificacao("Combinação inválida!");
+    if (skinID === -1) {
+      return mostrarNotificacao("Combinação inválida!");
+    }
 
-    cef.emit('loja:comprar',
-      { type: 1, value: skinID },
-      { type: 1, value: precoTotal }
-    );
-
+    cef.emit('loja:comprar', String(skinID), String(precoTotal));
     mostrarNotificacao("Compra realizada!");
   };
 
@@ -275,5 +273,6 @@
 
   renderizarRoupas();
 </script>
+
 </body>
 </html>
