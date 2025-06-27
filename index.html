@@ -234,33 +234,26 @@
   }
 
   // ✅ Botão EQUIPAR
-  document.getElementById('btnEquipar').onclick = () => {
-    if (camisaSelecionada < 0 || shortSelecionado < 0)
-      return mostrarNotificacao("Selecione camisa e short!");
+  ocument.getElementById('btnEquipar').onclick = () => {
+  if (camisaSelecionada < 0 || shortSelecionado < 0) {
+    return mostrarNotificacao("Selecione camisa e short!");
+  }
 
-    const skinID = obterSkinID(camisaSelecionada, shortSelecionado);
-    if (skinID === -1)
-      return mostrarNotificacao("Combinação inválida!");
-
-    cef.emit('loja:equipar', { type: 1, value: skinID });
-    mostrarNotificacao("Visualização aplicada!");
-  };
+  const data = `equiparSkin:${camisaSelecionada},${shortSelecionado}`;
+  cef.emit(data);
+  mostrarNotificacao("Visualização aplicada!");
+};
 
   // ✅ Botão COMPRAR
   document.getElementById('btnPagar').onclick = () => {
-    if (camisaSelecionada < 0 || shortSelecionado < 0)
-      return mostrarNotificacao("Selecione camisa e short!");
+  if (camisaSelecionada < 0 || shortSelecionado < 0) {
+    return mostrarNotificacao("Selecione camisa e short!");
+  }
 
-    const skinID = obterSkinID(camisaSelecionada, shortSelecionado);
-    if (skinID === -1)
-      return mostrarNotificacao("Combinação inválida!");
-
-    cef.emit('loja:comprar',
-      { type: 1, value: skinID },
-      { type: 1, value: precoTotal }
-    );
-    mostrarNotificacao("Compra realizada!");
-  };
+  const data = `comprarSkin:${camisaSelecionada},${shortSelecionado}`;
+  cef.emit(data);
+  mostrarNotificacao("Compra realizada!");
+};
 
   // ✅ Botão CANCELAR
   document.getElementById('btnCancelar').onclick = () => {
