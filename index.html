@@ -234,6 +234,8 @@
     const skinID = obterSkinID(camisaSelecionada, shortSelecionado);
     if (skinID == -1) return mostrarNotificacao("Combinação inválida!");
 
+    console.log("Camisa:", camisaSelecionada, "Short:", shortSelecionado);
+    console.log("SkinID enviado:", obterSkinID(camisaSelecionada, shortSelecionado));
     cef.emit('loja:equipar', skinID);
     mostrarNotificacao("Visualização aplicada!");
   };
