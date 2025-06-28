@@ -125,7 +125,7 @@
   <div class="menu-lateral">
     <div class="menu-icons">
       <img src="icone_camisa.png" onclick="mostrarCamisas()" />
-      <img src="icone_shorts.png" onclick="mostrarShorts(camisaSelecionada)" />
+      <img src="icone_shorts.png" onclick="mostrarShorts()" />
       <img src="icone_acessorios.png" onclick="mostrarAcessorios()" />
     </div>
     <div class="roupas-grid" id="grid-roupas"></div>
@@ -153,28 +153,33 @@
 
   const shortsPorCamisa = {
     1: [
-      { id: 1, preco: 3000, skinId: 24, img: 'short1.png' },
-      { id: 2, preco: 5000, skinId: 23, img: 'short2.png' }
+      { id: 1, preco: 3000, comando: "camisa1short1", img: 'short1.png' },
+      { id: 2, preco: 5000, comando: "camisa1short2", img: 'short2.png' }
     ],
     2: [
-      { id: 1, preco: 3000, skinId: 15, img: 'short1.png' },
-      { id: 2, preco: 5000, skinId: 20, img: 'short2.png' }
+      { id: 1, preco: 3000, comando: "camisa2short1", img: 'short1.png' },
+      { id: 2, preco: 5000, comando: "camisa2short2", img: 'short2.png' }
     ]
   };
 
   const acessorios = [
-    { id: 1, preco: 2000, img: 'acessorio1.png' },
-    { id: 2, preco: 2500, img: 'acessorio2.png' }
+    { id: 1, preco: 1000, comando: "oculos1", img: 'oculos1.png' },
+    { id: 2, preco: 1500, comando: "boné1", img: 'bone1.png' }
   ];
 
   let camisaSelecionada = null;
   let shortSelecionado = null;
+  let itemSelecionado = null;
+  let precoAtual = 0;
+  let comandoAtual = "";
 
   function mostrarCamisas() {
     const grid = document.getElementById('grid-roupas');
     grid.innerHTML = '';
     camisaSelecionada = null;
     shortSelecionado = null;
+    itemSelecionado = null;
+    precoAtual = 0;
     atualizarPreco(0);
     desativarBotoes();
 
@@ -182,58 +187,67 @@
       const div = document.createElement('div');
       div.className = 'roupa';
       div.style.backgroundImage = `url(${camisa.img})`;
-      div.onclick = () => mostrarShorts(camisa.id);
+      div.onclick = () => mostrarShortsPorCamisa(camisa.id);
       grid.appendChild(div);
     });
   }
 
-  function mostrarShorts(camisaId) {
-  camisaSelecionada = camisaId;
-  const grid = document.getElementById('grid-roupas');
-  grid.innerHTML = '';
+  function mostrarShortsPorCamisa(camisaId) {
+    camisaSelecionada = camisaId;
+    const grid = document.getElementById('grid-roupas');
+    grid.innerHTML = '';
+    shortsPorCamisa[camisaId].forEach(short => {
+      const div = document.createElement('div');
+      div.className = 'roupa';
+      div.style.backgroundImage = `url(${short.img})`;
+      div.onclick = () => selecionarItem(short);
+      grid.appendChild(div);
+    });
+  }
 
-  shortsPorCamisa[camisaId].forEach((short, index) => {
-    const div = document.createElement('div');
-    div.className = 'roupa';
-    div.style.backgroundImage = `url(${short.img})`;
+  function mostrarShorts() {
+    const grid = document.getElementById('grid-roupas');
+    grid.innerHTML = '';
+    shortSelecionado = null;
+    precoAtual = 0;
+    atualizarPreco(0);
+    desativarBotoes();
 
-    // Define o comando de forma única
-    const comando = `camisa${camisaId}short${short.id}`;
-
-    div.onclick = () => {
-      shortSelecionado = {
-        ...short,
-        comando: comando // comando dinâmico real
-      };
-      selecionarShort(shortSelecionado, div);
-    };
-
-    grid.appendChild(div);
-  });
-}
-
+    // mostra todos os shorts disponíveis
+    Object.values(shortsPorCamisa).flat().forEach(short => {
+      const div = document.createElement('div');
+      div.className = 'roupa';
+      div.style.backgroundImage = `url(${short.img})`;
+      div.onclick = () => selecionarItem(short);
+      grid.appendChild(div);
+    });
+  }
 
   function mostrarAcessorios() {
     const grid = document.getElementById('grid-roupas');
     grid.innerHTML = '';
+    itemSelecionado = null;
+    precoAtual = 0;
+    atualizarPreco(0);
+    desativarBotoes();
 
-    acessorios.forEach(acc => {
+    acessorios.forEach(item => {
       const div = document.createElement('div');
       div.className = 'roupa';
-      div.style.backgroundImage = `url(${acc.img})`;
-      div.onclick = () => mostrarNotificacao("Acessório selecionado (não aplicável)");
+      div.style.backgroundImage = `url(${item.img})`;
+      div.onclick = () => selecionarItem(item);
       grid.appendChild(div);
     });
   }
 
-  function selecionarShort(short, elemento) {
+  function selecionarItem(item) {
     document.querySelectorAll('.roupa').forEach(e => e.style.outline = 'none');
-    elemento.style.outline = '3px solid yellow';
-
-    shortSelecionado = short;
-    atualizarPreco(short.preco);
-    mostrarNotificacao(`Skin pronta: ID ${short.skinId}`);
+    precoAtual = item.preco || 0;
+    comandoAtual = item.comando || "";
+    atualizarPreco(precoAtual);
     ativarBotoes();
+    event.target.style.outline = '3px solid yellow';
+    mostrarNotificacao("Item selecionado!");
   }
 
   function atualizarPreco(preco) {
@@ -257,17 +271,16 @@
     setTimeout(() => (n.style.opacity = 0), 5000);
   }
 
-  // BOTÕES
   document.getElementById('btnEquipar').onclick = () => {
-    if (shortSelecionado) {
-      cef.emit("loja:equipar", shortSelecionado.comando);
+    if (comandoAtual) {
+      cef.emit("loja:equipar", comandoAtual);
       mostrarNotificacao("Visualização aplicada!");
     }
   };
 
   document.getElementById('btnPagar').onclick = () => {
-    if (shortSelecionado) {
-      cef.emit("loja:comprar", shortSelecionado.skinId.toString(), shortSelecionado.preco.toString());
+    if (comandoAtual) {
+      cef.emit("loja:comprar", comandoAtual, precoAtual.toString());
       mostrarNotificacao("Compra realizada!");
     }
   };
@@ -275,9 +288,6 @@
   document.getElementById('btnCancelar').onclick = () => {
     cef.emit("loja:cancelar");
   };
-
-  mostrarCamisas();
-  desativarBotoes();
 </script>
 
 </body>
