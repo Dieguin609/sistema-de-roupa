@@ -215,10 +215,10 @@
   function atualizarPreco() {
     if (camisaSelecionada && shortSelecionado) {
       let comando = camisaSelecionada.comando + shortSelecionado.comando;
-      if (comando === "camisa1short1") precoTotal = 2000;
-      else if (comando === "camisa1short2") precoTotal = 3500;
-      else if (comando === "camisa2short1") precoTotal = 2500;
-      else if (comando === "camisa2short2") precoTotal = 4000;
+      if (comando === "camisa1short1") precoTotal = 5000;
+      else if (comando === "camisa1short2") precoTotal = 5500;
+      else if (comando === "camisa2short1") precoTotal = 8500;
+      else if (comando === "camisa2short2") precoTotal = 10000;
       else precoTotal = 0;
 
       document.getElementById('preco-total').innerHTML = `VALOR TOTAL<br>R$ ${precoTotal}`;
