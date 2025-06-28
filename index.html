@@ -149,43 +149,32 @@
   let skinSelecionada = null;
   let precoAtual = 0;
 
-  const camisas = [
-    { nome: "Camisa 1", comando: "camisa1", img: "camisa1.png" },
-    { nome: "Camisa 2", comando: "camisa2", img: "camisa2.png" }
-  ];
-
-  const shorts = [
-    { nome: "Short 1", comando: "short1", img: "short1.png" },
-    { nome: "Short 2", comando: "short2", img: "short2.png" }
+  const skins = [
+    { nome: "Camisa 1 + Short 1", comando: "camisa1short1", img: "c1s1.png", preco: 3000 },
+    { nome: "Camisa 1 + Short 2", comando: "camisa1short2", img: "c1s2.png", preco: 3000 },
+    { nome: "Camisa 2 + Short 1", comando: "camisa2short1", img: "c2s1.png", preco: 3000 },
+    { nome: "Camisa 2 + Short 2", comando: "camisa2short2", img: "c2s2.png", preco: 3000 }
   ];
 
   function mostrarCamisas() {
     const grid = document.getElementById('grid-roupas');
     grid.innerHTML = '';
-    camisas.forEach(c => {
+    skins.forEach(skin => {
       const div = document.createElement('div');
       div.className = 'roupa';
-      div.style.backgroundImage = `url(${c.img})`;
-      div.onclick = () => selecionarSkin(c);
+      div.style.backgroundImage = `url(${skin.img})`;
+      div.onclick = () => selecionarSkin(skin);
       grid.appendChild(div);
     });
   }
 
   function mostrarShorts() {
-    const grid = document.getElementById('grid-roupas');
-    grid.innerHTML = '';
-    shorts.forEach(c => {
-      const div = document.createElement('div');
-      div.className = 'roupa';
-      div.style.backgroundImage = `url(${c.img})`;
-      div.onclick = () => selecionarSkin(c);
-      grid.appendChild(div);
-    });
+    mostrarCamisas(); // por enquanto usa mesma função
   }
 
   function selecionarSkin(skin) {
     skinSelecionada = skin;
-    precoAtual = skin.comando.includes("short") ? 3000 : 2000;
+    precoAtual = skin.preco;
     atualizarPreco();
     mostrarNotificacao(`Selecionado: ${skin.nome}`);
   }
@@ -201,21 +190,21 @@
     setTimeout(() => (n.style.opacity = 0), 5000);
   }
 
-  // BOTÕES COM CEF EMITS INDIVIDUAIS
+  // BOTÕES
   document.getElementById('btnEquipar').onclick = () => {
     if (!skinSelecionada) return;
-    if (skinSelecionada.comando === "camisa1") cef.emit("loja:equipar:camisa1");
-    if (skinSelecionada.comando === "camisa2") cef.emit("loja:equipar:camisa2");
-    if (skinSelecionada.comando === "short1") cef.emit("loja:equipar:short1");
-    if (skinSelecionada.comando === "short2") cef.emit("loja:equipar:short2");
+    if (skinSelecionada.comando === "camisa1short1") cef.emit("loja:equipar:camisa1short1");
+    if (skinSelecionada.comando === "camisa1short2") cef.emit("loja:equipar:camisa1short2");
+    if (skinSelecionada.comando === "camisa2short1") cef.emit("loja:equipar:camisa2short1");
+    if (skinSelecionada.comando === "camisa2short2") cef.emit("loja:equipar:camisa2short2");
   };
 
   document.getElementById('btnPagar').onclick = () => {
     if (!skinSelecionada) return;
-    if (skinSelecionada.comando === "camisa1") cef.emit("loja:comprar:camisa1", precoAtual.toString());
-    if (skinSelecionada.comando === "camisa2") cef.emit("loja:comprar:camisa2", precoAtual.toString());
-    if (skinSelecionada.comando === "short1") cef.emit("loja:comprar:short1", precoAtual.toString());
-    if (skinSelecionada.comando === "short2") cef.emit("loja:comprar:short2", precoAtual.toString());
+    if (skinSelecionada.comando === "camisa1short1") cef.emit("loja:comprar:camisa1short1", precoAtual.toString());
+    if (skinSelecionada.comando === "camisa1short2") cef.emit("loja:comprar:camisa1short2", precoAtual.toString());
+    if (skinSelecionada.comando === "camisa2short1") cef.emit("loja:comprar:camisa2short1", precoAtual.toString());
+    if (skinSelecionada.comando === "camisa2short2") cef.emit("loja:comprar:camisa2short2", precoAtual.toString());
   };
 
   document.getElementById('btnCancelar').onclick = () => {
