@@ -261,9 +261,14 @@
   };
 
   document.getElementById('btnPagar').onclick = () => {
-    mostrarNotificacao("Compra não implementada ainda");
-  };
+  const comando = camisaSelecionada?.comando + shortSelecionado?.comando;
 
+  if (comando === "camisa1short1") cef.emit("loja:comprar:camisa1short1");
+  else if (comando === "camisa1short2") cef.emit("loja:comprar:camisa1short2");
+  else if (comando === "camisa2short1") cef.emit("loja:comprar:camisa2short1");
+  else if (comando === "camisa2short2") cef.emit("loja:comprar:camisa2short2");
+};
+  
   document.getElementById('btnCancelar').onclick = () => {
     cef.emit("loja:cancelar");
   };
