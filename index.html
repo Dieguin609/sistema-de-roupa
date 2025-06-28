@@ -146,41 +146,47 @@
 </div>
 
 <script>
-  let skinSelecionada = null;
-  let precoAtual = 0;
+  let camisaSelecionada = null;
+  let shortSelecionado = null;
 
-  const skins = [
-    { nome: "Camisa 1 + Short 1", comando: "camisa1short1", img: "c1s1.png", preco: 3000 },
-    { nome: "Camisa 1 + Short 2", comando: "camisa1short2", img: "c1s2.png", preco: 3000 },
-    { nome: "Camisa 2 + Short 1", comando: "camisa2short1", img: "c2s1.png", preco: 3000 },
-    { nome: "Camisa 2 + Short 2", comando: "camisa2short2", img: "c2s2.png", preco: 3000 }
+  const camisas = [
+    { id: 1, nome: "Camisa 1", comando: "camisa1", img: "camisa1.png" },
+    { id: 2, nome: "Camisa 2", comando: "camisa2", img: "camisa2.png" }
+  ];
+
+  const shorts = [
+    { id: 1, nome: "Short 1", comando: "short1", img: "short1.png" },
+    { id: 2, nome: "Short 2", comando: "short2", img: "short2.png" }
   ];
 
   function mostrarCamisas() {
     const grid = document.getElementById('grid-roupas');
     grid.innerHTML = '';
-    skins.forEach(skin => {
+    camisas.forEach(c => {
       const div = document.createElement('div');
       div.className = 'roupa';
-      div.style.backgroundImage = `url(${skin.img})`;
-      div.onclick = () => selecionarSkin(skin);
+      div.style.backgroundImage = `url(${c.img})`;
+      div.onclick = () => {
+        camisaSelecionada = c;
+        mostrarNotificacao(`Camisa selecionada: ${c.nome}`);
+      };
       grid.appendChild(div);
     });
   }
 
   function mostrarShorts() {
-    mostrarCamisas(); // por enquanto usa mesma função
-  }
-
-  function selecionarSkin(skin) {
-    skinSelecionada = skin;
-    precoAtual = skin.preco;
-    atualizarPreco();
-    mostrarNotificacao(`Selecionado: ${skin.nome}`);
-  }
-
-  function atualizarPreco() {
-    document.getElementById('preco-total').innerHTML = `VALOR TOTAL<br>R$ ${precoAtual}`;
+    const grid = document.getElementById('grid-roupas');
+    grid.innerHTML = '';
+    shorts.forEach(s => {
+      const div = document.createElement('div');
+      div.className = 'roupa';
+      div.style.backgroundImage = `url(${s.img})`;
+      div.onclick = () => {
+        shortSelecionado = s;
+        mostrarNotificacao(`Short selecionado: ${s.nome}`);
+      };
+      grid.appendChild(div);
+    });
   }
 
   function mostrarNotificacao(msg) {
@@ -190,21 +196,26 @@
     setTimeout(() => (n.style.opacity = 0), 5000);
   }
 
-  // BOTÕES
+  function obterComandoFinal() {
+    if (!camisaSelecionada || !shortSelecionado) return null;
+    return `${camisaSelecionada.comando}${shortSelecionado.comando}`;
+  }
+
   document.getElementById('btnEquipar').onclick = () => {
-    if (!skinSelecionada) return;
-    if (skinSelecionada.comando === "camisa1short1") cef.emit("loja:equipar:camisa1short1");
-    if (skinSelecionada.comando === "camisa1short2") cef.emit("loja:equipar:camisa1short2");
-    if (skinSelecionada.comando === "camisa2short1") cef.emit("loja:equipar:camisa2short1");
-    if (skinSelecionada.comando === "camisa2short2") cef.emit("loja:equipar:camisa2short2");
+    const comando = obterComandoFinal();
+    if (!comando) return mostrarNotificacao("Selecione camisa e short.");
+
+    if (comando === "camisa1short1") cef.emit("loja:equipar:camisa1short1");
+    else if (comando === "camisa1short2") cef.emit("loja:equipar:camisa1short2");
+    else if (comando === "camisa2short1") cef.emit("loja:equipar:camisa2short1");
+    else if (comando === "camisa2short2") cef.emit("loja:equipar:camisa2short2");
+    else mostrarNotificacao("Combinação inválida.");
   };
 
   document.getElementById('btnPagar').onclick = () => {
-    if (!skinSelecionada) return;
-    if (skinSelecionada.comando === "camisa1short1") cef.emit("loja:comprar:camisa1short1", precoAtual.toString());
-    if (skinSelecionada.comando === "camisa1short2") cef.emit("loja:comprar:camisa1short2", precoAtual.toString());
-    if (skinSelecionada.comando === "camisa2short1") cef.emit("loja:comprar:camisa2short1", precoAtual.toString());
-    if (skinSelecionada.comando === "camisa2short2") cef.emit("loja:comprar:camisa2short2", precoAtual.toString());
+    const comando = obterComandoFinal();
+    if (!comando) return mostrarNotificacao("Selecione camisa e short.");
+    cef.emit(`loja:comprar:${comando}`);
   };
 
   document.getElementById('btnCancelar').onclick = () => {
